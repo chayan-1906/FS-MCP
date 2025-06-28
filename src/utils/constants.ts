@@ -1,16 +1,16 @@
 const tools = {
     // directory
-    listDirectory: "list_directory", // ✅
-    createDirectory: "create_directory", // ✅
-    deleteDirectory: "delete_directory", // ✅
+    listDirectory: "list-directory", // ✅
+    createDirectory: "create-directory", // ✅
+    deleteDirectory: "delete-directory", // ✅
 
     // file
-    getFileInfo: "get_file_info", // ✅
-    readFile: "read_file", // ✅
-    writeFile: "write_file", // can't create any files except .txt
-    copyFile: "copy_file", // ✅
-    moveFile: "move_file", // ✅
-    deleteFile: "delete_file", // ✅
+    getFileInfo: "get-file-info", // ✅
+    readFile: "read-file", // ✅
+    writeFile: "write-file", // can't create any files except .txt
+    copyFile: "copy-file", // ✅
+    moveFile: "move-file", // ✅
+    deleteFile: "delete-file", // ✅
 };
 
 const constants = {

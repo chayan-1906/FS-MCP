@@ -21,15 +21,15 @@
   },
   "dependencies": {
     "express": "^5.1.0",
+    "mcp-utils": "github:pdas9647/MCP-Utils#master",
     "nodemon": "^3.1.10",
-    "zod": "^3.25.67",
-    "mcp-utils": "github:pdas9647/MCP-Utils#master"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.13.2",
-    "@types/express": "^4.17.23",
+    "@types/express": "^5.0.3",
     "@vercel/ncc": "^0.38.3",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
