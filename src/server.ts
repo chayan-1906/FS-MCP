@@ -1,15 +1,13 @@
 const startTime = Date.now();
 
-// import { sendError } from "mcp-utils/dist/utils";
-
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {StdioServerTransport} from "@modelcontextprotocol/sdk/server/stdio.js";
 import express from "express";
-import { setupMcpTools } from "./controllers/ToolsController";
-import { PORT } from "./config/config";
-import { printInConsole } from "./utils/printInConsole";
-import { freezePortOnQuit, killPortOnLaunch } from "./utils/killPortOnLaunch";
-import { addOrUpdateMCPServer, setEntry } from "./config/updateClaudeConfig";
+import {setupMcpTools} from "./controllers/ToolsController";
+import {PORT} from "./config/config";
+import {printInConsole} from "./utils/printInConsole";
+import {freezePortOnQuit, killPortOnLaunch} from "./utils/killPortOnLaunch";
+import {addOrUpdateMCPServer, setEntry} from "./config/updateClaudeConfig";
 
 const app = express();
 export const transport = new StdioServerTransport();
@@ -39,7 +37,7 @@ killPortOnLaunch().then(async () => {
             `Server running on http://localhost:${PORT}, started in ${Date.now() - startTime}ms`
         );
 
-        const { entry } = setEntry() as any;
+        const {entry} = setEntry() as any;
         await addOrUpdateMCPServer(serverName, entry);
         await startMcp();
         await printInConsole(transport, `All tools loaded in ${Date.now() - startTime}ms`);

@@ -1,11 +1,11 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { transport } from "../../server";
-import { tools } from "../../utils/constants";
+import {transport} from "../../server";
+import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import { sendError } from "../../utils/sendError";
+import {sendError} from "../../utils/sendError";
 
 // Read File Tool
 const readFileFunc = async (filePath: string, encoding: string = "utf8") => {
@@ -20,7 +20,7 @@ const writeFileFunc = async (filePath: string, content: string, encoding: string
 
     // Ensure parent directory exists
     const parentDir = path.dirname(fullPath);
-    await fs.mkdir(parentDir, { recursive: true });
+    await fs.mkdir(parentDir, {recursive: true});
 
     await fs.writeFile(fullPath, content, encoding as BufferEncoding);
     return `File written successfully: ${filePath}`;
@@ -40,7 +40,7 @@ const moveFileFunc = async (sourcePath: string, destinationPath: string) => {
 
     // Ensure destination directory exists
     const parentDir = path.dirname(fullDestination);
-    await fs.mkdir(parentDir, { recursive: true });
+    await fs.mkdir(parentDir, {recursive: true});
 
     await fs.rename(fullSource, fullDestination);
     return `Moved ${sourcePath} to ${destinationPath}`;
@@ -53,7 +53,7 @@ const copyFileFunc = async (sourcePath: string, destinationPath: string) => {
 
     // Ensure destination directory exists
     const parentDir = path.dirname(fullDestination);
-    await fs.mkdir(parentDir, { recursive: true });
+    await fs.mkdir(parentDir, {recursive: true});
 
     await fs.copyFile(fullSource, fullDestination);
     return `Copied ${sourcePath} to ${destinationPath}`;
@@ -91,7 +91,7 @@ export const registerReadFile = (server: McpServer) => {
                 .optional()
                 .describe("File encoding (default: utf8)"),
         },
-        async ({ path: filePath, encoding }) => {
+        async ({path: filePath, encoding}) => {
             try {
                 const content = await readFileFunc(filePath, encoding);
 
@@ -134,7 +134,7 @@ export const registerWriteFile = (server: McpServer) => {
                 .optional()
                 .describe("File encoding (default: utf8)"),
         },
-        async ({ path: filePath, content, encoding }) => {
+        async ({path: filePath, content, encoding}) => {
             try {
                 const result = await writeFileFunc(filePath, content, encoding);
 
@@ -172,7 +172,7 @@ export const registerDeleteFile = (server: McpServer) => {
         {
             path: z.string().describe("File path to delete (relative to base path)"),
         },
-        async ({ path: filePath }) => {
+        async ({path: filePath}) => {
             try {
                 const result = await deleteFileFunc(filePath);
 
@@ -211,7 +211,7 @@ export const registerMoveFile = (server: McpServer) => {
             source: z.string().describe("Source path (relative to base path)"),
             destination: z.string().describe("Destination path (relative to base path)"),
         },
-        async ({ source, destination }) => {
+        async ({source, destination}) => {
             try {
                 const result = await moveFileFunc(source, destination);
 
@@ -250,7 +250,7 @@ export const registerCopyFile = (server: McpServer) => {
             source: z.string().describe("Source file path (relative to base path)"),
             destination: z.string().describe("Destination file path (relative to base path)"),
         },
-        async ({ source, destination }) => {
+        async ({source, destination}) => {
             try {
                 const result = await copyFileFunc(source, destination);
 
@@ -288,7 +288,7 @@ export const registerGetFileInfo = (server: McpServer) => {
         {
             path: z.string().describe("File or directory path (relative to base path)"),
         },
-        async ({ path: filePath }) => {
+        async ({path: filePath}) => {
             try {
                 const result = await getFileInfoFunc(filePath);
 

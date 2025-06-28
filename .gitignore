@@ -20,3 +20,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+./Claude-MCP-test

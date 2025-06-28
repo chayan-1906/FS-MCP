@@ -1,16 +1,16 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import path from "path";
 import z from "zod";
 import * as fs from "fs/promises";
-import { transport } from "../../server";
-import { tools } from "../../utils/constants";
+import {transport} from "../../server";
+import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import { sendError } from "../../utils/sendError";
+import {sendError} from "../../utils/sendError";
 
 // List Directory Tool
 const listDirectoryFunc = async (dirPath: string = ".") => {
     const fullPath = resolvePath(dirPath);
-    const items = await fs.readdir(fullPath, { withFileTypes: true });
+    const items = await fs.readdir(fullPath, {withFileTypes: true});
 
     const result = await Promise.all(
         items.map(async (item) => {
@@ -33,7 +33,7 @@ const listDirectoryFunc = async (dirPath: string = ".") => {
 // Create Directory Tool
 const createDirectoryFunc = async (dirPath: string, recursive: boolean = true) => {
     const fullPath = resolvePath(dirPath);
-    await fs.mkdir(fullPath, { recursive });
+    await fs.mkdir(fullPath, {recursive});
     return `Directory created: ${dirPath}`;
 };
 
@@ -42,7 +42,7 @@ const deleteDirectoryFunc = async (dirPath: string, recursive: boolean = false) 
     const fullPath = resolvePath(dirPath);
 
     if (recursive) {
-        await fs.rm(fullPath, { recursive: true, force: true });
+        await fs.rm(fullPath, {recursive: true, force: true});
     } else {
         await fs.rmdir(fullPath);
     }
@@ -62,7 +62,7 @@ export const registerListDirectory = (server: McpServer) => {
                     "Directory path to list (relative to base path). Defaults to current directory"
                 ),
         },
-        async ({ path: dirPath }) => {
+        async ({path: dirPath}) => {
             try {
                 const result = await listDirectoryFunc(dirPath);
 
@@ -104,7 +104,7 @@ export const registerCreateDirectory = (server: McpServer) => {
                 .optional()
                 .describe("Create parent directories if they don't exist (default: true)"),
         },
-        async ({ path: dirPath, recursive }) => {
+        async ({path: dirPath, recursive}) => {
             try {
                 const result = await createDirectoryFunc(dirPath, recursive);
 
@@ -146,7 +146,7 @@ export const registerDeleteDirectory = (server: McpServer) => {
                 .optional()
                 .describe("Delete directory and all its contents (default: false)"),
         },
-        async ({ path: dirPath, recursive }) => {
+        async ({path: dirPath, recursive}) => {
             try {
                 const result = await deleteDirectoryFunc(dirPath, recursive);
 
