@@ -2,7 +2,6 @@ import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import {transport} from "../server";
 import {printInConsole} from "mcp-utils/utils";
 
-
 import {registerTool as listDirectory} from '../tools/directory/list-directory';
 import {registerTool as createDirectory} from '../tools/directory/create-directory';
 import {registerTool as deleteDirectory} from '../tools/directory/delete-directory';

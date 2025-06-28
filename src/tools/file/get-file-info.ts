@@ -1,10 +1,10 @@
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
 import * as fs from "fs/promises";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {sendError} from "mcp-utils/utils";
 import {transport} from "../../server";
 import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import {sendError} from "mcp-utils/utils";
 
 const getFileInfo = async (filePath: string) => {
     const fullPath = resolvePath(filePath);
@@ -31,9 +31,9 @@ export const registerTool = (server: McpServer) => {
         tools.getFileInfo,
         "Retrieves metadata about a file",
         {
-            path: z.string().describe("Absolute or base-relative path to the file or directory")
+            filePath: z.string().describe("Absolute or base-relative path to the file or directory")
         },
-        async ({path: filePath}) => {
+        async ({filePath}) => {
             try {
                 const result = await getFileInfo(filePath);
 

@@ -1,10 +1,10 @@
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
 import * as fs from "fs/promises";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {sendError} from "mcp-utils/utils";
 import {transport} from "../../server";
 import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import {sendError} from "mcp-utils/utils";
 
 const deleteFile = async (filePath: string) => {
     const fullPath = resolvePath(filePath);
@@ -17,9 +17,9 @@ export const registerTool = (server: McpServer) => {
         tools.deleteFile,
         "Deletes a file at the specified path",
         {
-            path: z.string().describe("Absolute or base-relative path to the file to delete"),
+            filePath: z.string().describe("Absolute or base-relative path to the file to delete"),
         },
-        async ({path: filePath}) => {
+        async ({filePath}) => {
             try {
                 const result = await deleteFile(filePath);
 

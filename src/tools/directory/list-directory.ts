@@ -1,11 +1,11 @@
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-import path from "path";
 import z from "zod";
+import path from "path";
 import * as fs from "fs/promises";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {sendError} from "mcp-utils/utils";
 import {transport} from "../../server";
 import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import {sendError} from "mcp-utils/utils";
 
 const listDirectory = async (dirPath: string = ".") => {
     const fullPath = resolvePath(dirPath);
@@ -34,9 +34,9 @@ export const registerTool = (server: McpServer) => {
         tools.listDirectory,
         "List all files and folders within the specified directory",
         {
-            path: z.string().optional().describe("Absolute or base-relative directory path to list. Defaults to the base/root directory if omitted"),
+            dirPath: z.string().optional().describe("Absolute or base-relative directory path to list. Defaults to the base/root directory if omitted"),
         },
-        async ({path: dirPath}) => {
+        async ({dirPath}) => {
             try {
                 const result = await listDirectory(dirPath);
 

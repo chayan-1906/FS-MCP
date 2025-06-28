@@ -1,6 +1,7 @@
 import * as path from "path";
+import {BASE_PATH} from "../config/config";
 
-const basePath = process.env.BASE_PATH || process.cwd();
+const basePath = BASE_PATH || process.cwd();
 
 // Utility function to resolve and validate paths
 const resolvePath = (relativePath: string): string => {
@@ -12,6 +13,6 @@ const resolvePath = (relativePath: string): string => {
     }
 
     return resolved;
-};
+}
 
 export default resolvePath;

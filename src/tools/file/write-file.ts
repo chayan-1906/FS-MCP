@@ -1,11 +1,11 @@
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
+import path from "path";
 import * as fs from "fs/promises";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {sendError} from "mcp-utils/utils";
 import {transport} from "../../server";
 import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import {sendError} from "mcp-utils/utils";
-import path from "path";
 
 const writeFile = async (filePath: string, content: string, encoding: string = "utf8") => {
     const fullPath = resolvePath(filePath);
@@ -23,11 +23,11 @@ export const registerTool = (server: McpServer) => {
         tools.writeFile,
         "Write content to a file at the specified path, creating or overwriting the file",
         {
-            path: z.string().describe("Absolute or base-relative path to the file to write"),
+            filePath: z.string().describe("Absolute or base-relative path to the file to write"),
             content: z.string().describe("Text content to write into the file"),
             encoding: z.enum(["utf8", "ascii", "base64", "hex"]).optional().describe("Encoding to use when writing the file. Defaults to 'utf8'")
         },
-        async ({path: filePath, content, encoding}) => {
+        async ({filePath, content, encoding}) => {
             try {
                 const result = await writeFile(filePath, content, encoding);
 

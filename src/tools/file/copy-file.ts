@@ -1,22 +1,22 @@
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
+import path from "path";
 import * as fs from "fs/promises";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {sendError} from "mcp-utils/utils";
 import {transport} from "../../server";
 import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import {sendError} from "mcp-utils/utils";
-import path from "path";
 
-const copyFile = async (sourcePath: string, destinationPath: string) => {
-    const fullSource = resolvePath(sourcePath);
-    const fullDestination = resolvePath(destinationPath);
+const copyFile = async (source: string, destination: string) => {
+    const fullSource = resolvePath(source);
+    const fullDestination = resolvePath(destination);
 
     // Ensure destination directory exists
     const parentDir = path.dirname(fullDestination);
     await fs.mkdir(parentDir, {recursive: true});
 
     await fs.copyFile(fullSource, fullDestination);
-    return `Copied ${sourcePath} to ${destinationPath}`;
+    return `Copied ${source} to ${destination}`;
 }
 
 export const registerTool = (server: McpServer) => {

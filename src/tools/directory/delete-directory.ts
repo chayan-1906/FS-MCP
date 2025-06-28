@@ -1,10 +1,10 @@
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import z from "zod";
 import * as fs from "fs/promises";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {sendError} from "mcp-utils/utils";
 import {transport} from "../../server";
 import {tools} from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-import {sendError} from "mcp-utils/utils";
 
 const deleteDirectory = async (dirPath: string, recursive: boolean = false) => {
     const fullPath = resolvePath(dirPath);
@@ -23,10 +23,10 @@ export const registerTool = (server: McpServer) => {
         tools.deleteDirectory,
         "Deletes a directory",
         {
-            path: z.string().describe("Absolute or base-relative path of the directory to delete"),
+            dirPath: z.string().describe("Absolute or base-relative path of the directory to delete"),
             recursive: z.boolean().optional().describe("If true, deletes the directory and all its contents. Defaults to false"),
         },
-        async ({path: dirPath, recursive}) => {
+        async ({dirPath, recursive}) => {
             try {
                 const result = await deleteDirectory(dirPath, recursive);
 
