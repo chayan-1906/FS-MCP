@@ -2,6 +2,7 @@
     "name": "fs-mcp",
     "version": "1.0.0",
     "main": "src/server.js",
+    "type": "module",
     "keywords": [
         "model-context-protocol",
         "file-system",
