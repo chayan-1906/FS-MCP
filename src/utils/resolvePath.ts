@@ -1,18 +1,36 @@
 import * as path from "path";
-import {BASE_PATH} from "../config/config";
+import {ALLOWED_PATHS} from "../config/config";
 
-const basePath = BASE_PATH || process.cwd();
-
-// Utility function to resolve and validate paths
 const resolvePath = (relativePath: string): string => {
-    const resolved = path.resolve(basePath, relativePath);
+    // If it's already an absolute path, validate it's allowed
+    if (path.isAbsolute(relativePath)) {
+        const resolved = path.resolve(relativePath);
 
-    // Security check: ensure the resolved path is within the base path
-    if (!resolved.startsWith(path.resolve(basePath))) {
-        throw new Error("Access denied: Path is outside allowed directory");
+        const isAllowed = ALLOWED_PATHS.some(allowedPath => {
+            const basePath = allowedPath || process.cwd();
+            const resolvedBasePath = path.resolve(basePath);
+            return resolved.startsWith(resolvedBasePath);
+        });
+
+        if (!isAllowed) {
+            throw new Error("Access denied: Path is outside allowed directories");
+        }
+
+        return resolved;
     }
 
-    return resolved;
+    // For relative paths, try each allowed path
+    for (const allowedPath of ALLOWED_PATHS) {
+        const basePath = allowedPath || process.cwd();
+        const resolved = path.resolve(basePath, relativePath);
+
+        const resolvedBasePath = path.resolve(basePath);
+        if (resolved.startsWith(resolvedBasePath)) {
+            return resolved;
+        }
+    }
+
+    throw new Error("Access denied: Path is outside allowed directories");
 }
 
 export default resolvePath;

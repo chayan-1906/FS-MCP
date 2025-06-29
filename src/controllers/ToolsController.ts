@@ -12,6 +12,7 @@ import {registerTool as writeFile} from '../tools/file/write-file';
 import {registerTool as copyFile} from '../tools/file/copy-file';
 import {registerTool as moveFile} from '../tools/file/move-file';
 import {registerTool as deleteFile} from '../tools/file/delete-file';
+import {registerTool as searchFileDirectory} from '../tools/file/search-file-directory';
 
 async function setupMcpTools(server: McpServer) {
     const start = Date.now();
@@ -28,6 +29,7 @@ async function setupMcpTools(server: McpServer) {
     copyFile(server);
     moveFile(server);
     deleteFile(server);
+    searchFileDirectory(server);
 
     await printInConsole(transport, `All tools loaded in ${Date.now() - start}ms`);
 }

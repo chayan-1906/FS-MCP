@@ -11,6 +11,7 @@ const tools = {
     copyFile: "copy-file", // ✅
     moveFile: "move-file", // ✅
     deleteFile: "delete-file", // ✅
+    searchFileDirectory: "search-file-directory", // ✅
 };
 
 const constants = {
