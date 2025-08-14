@@ -9,7 +9,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { addOrUpdateMCPServer, freezePortOnQuit, killPortOnLaunch, printInConsole, setEntry } from "mcp-utils/utils";
 import { PORT } from "./config/config";
 import { setupMcpTools } from "./controllers";
-import { writeFile } from "./tools/file/write-file";
+import { modifyFile } from "./tools/file/modify-file";
 import { SystemControllerRoute } from "./controllers/SystemController";
 
 const app = express();
@@ -25,10 +25,26 @@ const server = new McpServer({
 });
 
 // REST API Routes
-app.post("/api/write-file", async (req, res) => {
+app.post("/api/modify-file", async (req, res) => {
     try {
         const {filePath, content, encoding} = req.body;
-        const result = await writeFile(filePath, content, encoding);
+
+        // For API usage, we need to replace entire file content
+        // First, check if file exists and count lines
+        let totalLines = 1;
+        try {
+            const fs = await import("fs/promises");
+            const resolvePath = (await import("./utils/resolvePath")).default;
+            const fullPath = await resolvePath(filePath, 'read');
+            const existingContent = await fs.readFile(fullPath, (encoding || "utf8") as BufferEncoding);
+            totalLines = existingContent.split('\n').length;
+        } catch (error: any) {
+            if (error.code !== 'ENOENT') {
+                throw error;
+            }
+        }
+
+        const result = await modifyFile(filePath, "replace", 1, content, totalLines, encoding);
         res.json({success: true, message: result});
     } catch (error: any) {
         res.status(500).json({success: false, error: error.message});

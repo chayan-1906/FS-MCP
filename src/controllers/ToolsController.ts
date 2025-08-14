@@ -8,7 +8,6 @@ import { registerTool as deleteDirectory } from '../tools/directory/delete-direc
 import { registerTool as getAllowedDirectories } from '../tools/directory/get-allowed-directories';
 
 import { registerTool as readFile } from '../tools/file/read-file';
-import { registerTool as writeFile } from '../tools/file/write-file';
 import { registerTool as createFile } from '../tools/file/create-file';
 import { registerTool as modifyFile } from '../tools/file/modify-file';
 import { registerTool as getFileLines } from '../tools/file/get-file-lines';
@@ -37,7 +36,6 @@ async function setupMcpTools(server: McpServer) {
 
     // file
     readFile(server);
-    writeFile(server);
     createFile(server);
     modifyFile(server);
     getFileLines(server);

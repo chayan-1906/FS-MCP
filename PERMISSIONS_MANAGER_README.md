@@ -85,7 +85,7 @@ http://localhost:20252
 
 - `GET /api/config-file-path` - Get the config file location
 - `POST /api/read-file` - Read the permissions file
-- `POST /api/write-file` - Write permissions to the config file
+- `POST /api/modify-file` - Write permissions to the config file
 - `POST /api/initialize-config` - Initialize default permissions
 
 ### Config File Location

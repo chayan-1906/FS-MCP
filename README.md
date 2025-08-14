@@ -80,7 +80,7 @@ The server provides these REST API endpoints:
 
 - `GET /api/config-file-path` - Get the config file path
 - `POST /api/read-file` - Read file contents
-- `POST /api/write-file` - Write content to a file
+- `POST /api/modify-file` - Write content to a file
 - `POST /api/initialize-config` - Initialize config file with default permissions
 
 ## Auto-Creation Feature
