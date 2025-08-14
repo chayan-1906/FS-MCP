@@ -10,6 +10,8 @@ import { registerTool as getAllowedDirectories } from '../tools/directory/get-al
 import { registerTool as readFile } from '../tools/file/read-file';
 import { registerTool as writeFile } from '../tools/file/write-file';
 import { registerTool as createFile } from '../tools/file/create-file';
+import { registerTool as modifyFile } from '../tools/file/modify-file';
+import { registerTool as getFileLines } from '../tools/file/get-file-lines';
 import { registerTool as copyFile } from '../tools/file/copy-file';
 import { registerTool as deleteFile } from '../tools/file/delete-file';
 import { registerTool as createExcel } from '../tools/file/create-excel';
@@ -37,6 +39,8 @@ async function setupMcpTools(server: McpServer) {
     readFile(server);
     writeFile(server);
     createFile(server);
+    modifyFile(server);
+    getFileLines(server);
     createExcel(server);
     readExcel(server);
     createPresentation(server);
