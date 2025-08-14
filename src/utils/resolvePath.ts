@@ -3,7 +3,6 @@ import { getAllowedRoots } from "./getAllowedRoots";
 import { getClaudeConfigDir } from "mcp-utils/utils";
 import { constants } from "./constants";
 
-// Find directory by name in allowed roots
 const findDirectoryByName = async (searchName: string): Promise<string | null> => {
     const ALLOWED_ROOTS = await getAllowedRoots();
     for (const root of ALLOWED_ROOTS) {
@@ -12,7 +11,7 @@ const findDirectoryByName = async (searchName: string): Promise<string | null> =
         }
     }
     return null;
-};
+}
 
 const resolvePath = async (relativePath: string, operation: 'read' | 'write'): Promise<string> => {
     const resolved = path.resolve(relativePath);
@@ -25,7 +24,6 @@ const resolvePath = async (relativePath: string, operation: 'read' | 'write'): P
 
     const ALLOWED_ROOTS = await getAllowedRoots();
 
-    // If it's already an absolute path, validate it's allowed
     if (path.isAbsolute(relativePath)) {
         // Find ALL matching roots, then pick the most specific one (longest path)
         const matchingRoots = ALLOWED_ROOTS.filter((root: any) => {
@@ -47,19 +45,16 @@ const resolvePath = async (relativePath: string, operation: 'read' | 'write'): P
         return resolved;
     }
 
-    // For relative paths, try to resolve intelligently
     const pathParts = relativePath.split('/');
     const firstPart = pathParts[0];
     const remainingPath = pathParts.slice(1).join('/');
 
-    // Try to find the first part as a directory name in allowed roots
     const foundDir = await findDirectoryByName(firstPart);
     if (foundDir) {
         const fullPath = remainingPath ? path.join(foundDir, remainingPath) : foundDir;
         return await resolvePath(fullPath, operation);
     }
 
-    // Fallback: treat as absolute path if it looks like one
     if (relativePath.startsWith('/') || relativePath.includes(':')) {
         return await resolvePath(path.resolve(relativePath), operation);
     }

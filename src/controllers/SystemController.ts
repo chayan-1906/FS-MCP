@@ -1,17 +1,15 @@
-import express from "express";
 import os from "os";
 import path from "path";
+import express from "express";
 
 const router = express.Router();
 
-// Add endpoint to get system info and common paths
 router.get("/system-info", (req, res) => {
     try {
         const username = os.userInfo().username;
         const homedir = os.homedir();
         const platform = os.platform();
 
-        // Common paths based on OS
         let commonPaths = [];
 
         switch (platform) {

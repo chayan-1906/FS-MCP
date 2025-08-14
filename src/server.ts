@@ -18,22 +18,17 @@ export const transport = new StdioServerTransport();
 app.use(express.json());
 app.use(cors());
 
-// Create an MCP server
 const server = new McpServer({
     name: "FileSystem",
     version: "1.0.0",
 });
 
-// REST API Routes
 app.post("/api/modify-file", async (req, res) => {
     try {
         const {filePath, content, encoding} = req.body;
 
-        // For API usage, we need to replace entire file content
-        // First, check if file exists and count lines
         let totalLines = 1;
         try {
-            const fs = await import("fs/promises");
             const resolvePath = (await import("./utils/resolvePath")).default;
             const fullPath = await resolvePath(filePath, 'read');
             const existingContent = await fs.readFile(fullPath, (encoding || "utf8") as BufferEncoding);
@@ -82,29 +77,19 @@ app.post("/api/initialize-config", async (req, res) => {
     }
 });
 
-// Add the system routes
 app.use("/api", SystemControllerRoute);
 
-// Serve static files from src/public directory
 const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
-// Serve the permissions manager HTML file
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "fs-permissions-manager.html"));
 });
-
-app.get("/permissions", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "fs-permissions-manager.html"));
-});
-
-// Debug route to check if server is working
 
 freezePortOnQuit();
 
 const serverName = "fs";
 
-// Start receiving messages on stdin and sending messages on stdout
 async function startMcp() {
     await setupMcpTools(server);
     await server.connect(transport);
