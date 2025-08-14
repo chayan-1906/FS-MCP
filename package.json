@@ -23,8 +23,7 @@
     "dev": "ts-node src/server.ts",
     "build": "tsc",
     "bundle": "ncc build dist/server.js -o build",
-    "package": "ts-node src/scripts/package-script.ts",
-    "postinstall": "npm run build"
+    "package": "ts-node src/scripts/package-script.ts"
   },
   "dependencies": {
     "@types/cors": "^2.8.19",
@@ -42,7 +41,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.1",
+    "@modelcontextprotocol/sdk": "^1.17.2",
     "@types/express": "^5.0.3",
     "@vercel/ncc": "^0.38.3",
     "nodemon": "^3.1.10",

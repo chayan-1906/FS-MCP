@@ -8,7 +8,7 @@ import { tools } from "../utils/constants";
 import resolvePath from "../utils/resolvePath";
 
 const moveRenameFileDirectory = async (source: string, destination: string) => {
-    const fullSource = await resolvePath(source, 'write');
+    const fullSource = await resolvePath(source, 'read');
     const fullDestination = await resolvePath(destination, 'write');
 
     // Ensure destination directory exists
