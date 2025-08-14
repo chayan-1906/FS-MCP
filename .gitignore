@@ -5,6 +5,7 @@
 node_modules/
 build/
 dist/
+src/utils/embeddedHtml.ts
 
 # debug
 npm-debug.*
