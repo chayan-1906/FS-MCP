@@ -1,13 +1,13 @@
 import z from "zod";
 import * as fs from "fs/promises";
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-import {sendError} from "mcp-utils/utils";
-import {transport} from "../../server";
-import {tools} from "../../utils/constants";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { sendError } from "mcp-utils/utils";
+import { transport } from "../../server";
+import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
 
 const readFile = async (filePath: string, encoding: string = "utf8") => {
-    const fullPath = resolvePath(filePath);
+    const fullPath = await resolvePath(filePath, 'read');
     const content = await fs.readFile(fullPath, encoding as BufferEncoding);
     return content;
 }

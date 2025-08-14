@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FS-MCP Permissions Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+    />
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        .permission-card.selected {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-color: #6366f1;
+            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.2);
+        }
+
+        .permission-card.selected .permission-icon {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .removed-item {
+            opacity: 0.6;
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+            border: 2px dashed #f59e0b;
+        }
+
+        .undo-animation {
+            animation: undoShake 0.5s ease-in-out;
+        }
+
+        @keyframes undoShake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden">
+<div class="h-full flex flex-col">
+    <!-- Header -->
+    <div class="bg-white shadow-sm p-4 sm:p-6">
+        <div class="text-center">
+            <h1 class="text-2xl sm:text-4xl font-bold mb-2">
+                        <span
+                                class="bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent"
+                        >
+                            File System Permissions
+                        </span>
+            </h1>
+            <p class="text-sm sm:text-base text-gray-600">
+                Control AI access to your files and folders
+            </p>
+        </div>
+    </div>
+
+    <!-- Server Status Banner -->
+    <div id="serverStatus" class="hidden bg-red-50 border-b border-red-200 p-3">
+        <div class="flex items-center justify-center gap-2">
+            <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            <span class="text-red-800 font-medium text-sm"
+            >Server connection lost - permissions cannot be loaded or saved</span
+            >
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-hidden">
+        <div class="h-full grid grid-cols-1 lg:grid-cols-2 gap-0">
+            <!-- Left Column: Add Permission -->
+            <div
+                    class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 sm:p-8 overflow-y-auto"
+            >
+                <div class="max-w-md mx-auto">
+                    <div
+                            class="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8"
+                    >
+                        <h2
+                                class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center"
+                        >
+                            Add New Permission
+                        </h2>
+
+                        <!-- File/Folder Selection -->
+                        <div class="mb-6">
+                            <label
+                                    class="block text-gray-700 font-medium mb-3 text-sm sm:text-base"
+                            >Enter File or Folder Path</label
+                            >
+                            <div class="relative">
+                                <input
+                                        type="text"
+                                        id="pathInput"
+                                        placeholder="Enter full path (e.g., /Users/username/Documents/file.txt)"
+                                        class="w-full p-3 sm:p-4 bg-white border border-gray-300 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                        onchange="handlePathInput(this.value)"
+                                />
+                                <div class="mt-2">
+                                    <p class="text-xs text-gray-500 mb-2">Common paths:</p>
+                                    <div class="flex flex-wrap gap-2" id="pathSuggestions">
+                                        <button
+                                                onclick="suggestPath('/Users')"
+                                                class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                                        >
+                                            /Users
+                                        </button>
+                                        <!-- Path suggestions will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Permission Level -->
+                        <div class="mb-6">
+                            <label
+                                    class="block text-gray-700 font-medium mb-4 text-sm sm:text-base"
+                            >Permission Level</label
+                            >
+                            <div
+                                    id="permissionOptions"
+                                    class="space-y-3 opacity-50 pointer-events-none"
+                            >
+                                <label class="block cursor-pointer">
+                                    <input
+                                            type="radio"
+                                            name="permission"
+                                            value="read"
+                                            class="peer sr-only"
+                                            onchange="updatePermissionSelection()"
+                                    />
+                                    <div
+                                            class="permission-card p-4 sm:p-5 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl sm:rounded-2xl border-2 border-transparent peer-checked:border-blue-400 peer-checked:shadow-lg transition-all hover:scale-105"
+                                    >
+                                        <div class="flex items-center gap-3 sm:gap-4">
+                                            <div
+                                                    class="permission-icon w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center shadow-lg"
+                                            >
+                                                <svg
+                                                        class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                    ></path>
+                                                    <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                    ></path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <div
+                                                        class="font-bold text-gray-800 text-sm sm:text-base"
+                                                >
+                                                    Read Only Access
+                                                </div>
+                                                <div
+                                                        class="text-xs sm:text-sm text-gray-600"
+                                                >
+                                                    View and list files only
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="block cursor-pointer">
+                                    <input
+                                            type="radio"
+                                            name="permission"
+                                            value="write"
+                                            class="peer sr-only"
+                                            onchange="updatePermissionSelection()"
+                                    />
+                                    <div
+                                            class="permission-card p-4 sm:p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl border-2 border-transparent peer-checked:border-purple-400 peer-checked:shadow-lg transition-all hover:scale-105"
+                                    >
+                                        <div class="flex items-center gap-3 sm:gap-4">
+                                            <div
+                                                    class="permission-icon w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg"
+                                            >
+                                                <svg
+                                                        class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                    ></path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <div
+                                                        class="font-bold text-gray-800 text-sm sm:text-base"
+                                                >
+                                                    Read & Write Access
+                                                </div>
+                                                <div
+                                                        class="text-xs sm:text-sm text-gray-600"
+                                                >
+                                                    Full control over files
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button
+                                id="addPermissionBtn"
+                                onclick="addPermission()"
+                                disabled
+                                class="w-full py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-bold rounded-xl sm:rounded-2xl hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base"
+                        >
+                            Add Permission
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Active Permissions -->
+            <div class="bg-white border-l border-gray-200 overflow-y-auto">
+                <div class="p-4 sm:p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800">
+                            Active Permissions
+                        </h2>
+                        <div class="flex items-center gap-3">
+                            <div id="pendingChanges" class="hidden">
+                                        <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                                        >
+                                            <span
+                                                    class="w-2 h-2 bg-amber-400 rounded-full mr-2"
+                                            ></span>
+                                            Unsaved changes
+                                        </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="permissionsList" class="space-y-3">
+                        <!-- Empty list - no hardcoded permissions -->
+                    </div>
+
+                    <!-- Undo Section -->
+                    <div
+                            id="undoSection"
+                            class="hidden mt-6 p-4 bg-amber-50 rounded-xl border-2 border-amber-200"
+                    >
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <svg
+                                        class="w-5 h-5 text-amber-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                >
+                                    <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                                    ></path>
+                                </svg>
+                                <div class="text-amber-800 font-medium text-sm">
+                                    <div>Removing permission</div>
+                                    <div
+                                            id="removedPath"
+                                            class="text-xs text-amber-700 mt-1"
+                                    ></div>
+                                </div>
+                            </div>
+                            <button
+                                    onclick="undoRemove()"
+                                    class="text-amber-600 hover:text-amber-800 font-medium text-sm"
+                            >
+                                Undo
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Save Changes -->
+                    <div id="saveSection" class="hidden mt-6">
+                        <button
+                                onclick="saveChanges()"
+                                class="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors text-sm sm:text-base"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedPath = "";
+    let selectedPermission = "";
+    let removedItems = [];
+    let hasUnsavedChanges = false;
+    let existingPaths = [];
+    let isServerConnected = true;
+    let configFilePath = "";
+
+    async function initializePathSuggestions() {
+        try {
+            const response = await fetch("http://localhost:20252/api/system-info");
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    const suggestionsDiv = document.getElementById("pathSuggestions");
+
+                    // Clear existing suggestions
+                    suggestionsDiv.innerHTML = "";
+
+                    // Add each common path as a button
+                    data.commonPaths.forEach(({path, label}) => {
+                        const button = document.createElement("button");
+                        button.className =
+                            "text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors";
+                        button.onclick = () => suggestPath(path);
+                        button.textContent = label;
+                        button.title = path; // Show full path on hover
+                        suggestionsDiv.appendChild(button);
+                    });
+
+                    // Update path input placeholder based on OS
+                    const pathInput = document.getElementById("pathInput");
+                    const placeholder =
+                        data.platform === "win32"
+                            ? "Enter full path (e.g., C:\\Users\\Documents\\file.txt)"
+                            : "Enter full path (e.g., /Users/Documents/file.txt)";
+                    pathInput.placeholder = placeholder;
+                }
+            }
+        } catch (error) {
+            console.error("Failed to get system information:", error);
+            // If we can't get the system info, remove the suggestions section
+            const suggestionsContainer = document.querySelector(".mt-2");
+            if (suggestionsContainer) {
+                suggestionsContainer.style.display = "none";
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initializeApp();
+        initializePathSuggestions();
+
+        // Check server status every 30 seconds
+        setInterval(checkServerStatus, 30000);
+    });
+
+    async function initializeApp() {
+        await checkServerStatus();
+        await getConfigFilePath();
+        await loadExistingPermissions();
+        checkFileSystemAccessSupport();
+    }
+
+    async function checkServerStatus() {
+        try {
+            const response = await fetch("http://localhost:20252/api/config-file-path");
+            if (response.ok) {
+                hideServerError();
+            } else {
+                showServerError();
+            }
+        } catch (error) {
+            console.error("Server connection failed:", error);
+            showServerError();
+        }
+    }
+
+    function checkFileSystemAccessSupport() {
+        if (window.showDirectoryPicker && window.showOpenFilePicker) {
+            console.log("File System Access API supported");
+        } else {
+            console.log("File System Access API not supported, using fallback");
+            // Show a message to the user about limited functionality
+            showMessage(
+                "File System Access API not available. You may need to manually enter paths.",
+                "warning"
+            );
+        }
+    }
+
+    async function getConfigFilePath() {
+        try {
+            const response = await fetch("http://localhost:20252/api/config-file-path");
+            if (response.ok) {
+                const result = await response.json();
+                configFilePath = result.filePath;
+                console.log("Config file path:", configFilePath);
+            } else {
+                // Fallback to default path
+                configFilePath =
+                    "/Users/arkabhattacharya/Library/Application Support/Claude/file_system_config.json";
+                console.log("Using fallback config path:", configFilePath);
+            }
+        } catch (error) {
+            console.error("Failed to get config file path:", error);
+            // Fallback to default path
+            configFilePath =
+                "/Users/arkabhattacharya/Library/Application Support/Claude/file_system_config.json";
+        }
+    }
+
+    function showServerError() {
+        isServerConnected = false;
+        document.getElementById("serverStatus").classList.remove("hidden");
+        document.getElementById("addPermissionBtn").disabled = true;
+        document.getElementById("saveSection").classList.add("hidden");
+    }
+
+    function hideServerError() {
+        isServerConnected = true;
+        document.getElementById("serverStatus").classList.add("hidden");
+        updateAddButton();
+
+        // If there are unsaved changes, show the save section
+        if (hasUnsavedChanges) {
+            document.getElementById("saveSection").classList.remove("hidden");
+        }
+    }
+
+    async function loadExistingPermissions() {
+        try {
+            const response = await fetch("http://localhost:20252/api/read-file", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    filePath: configFilePath,
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.content) {
+                    const permissions = JSON.parse(result.content);
+                    permissions.forEach((permission) => {
+                        addPermissionToList(permission.path, permission.operation, false);
+                    });
+                    hideServerError();
+                } else {
+                    // If file doesn't exist or is empty, initialize with empty array
+                    console.log("No existing permissions found, starting fresh");
+                    hideServerError();
+                }
+            } else {
+                showServerError();
+            }
+        } catch (error) {
+            console.error("Error loading permissions:", error);
+            showServerError();
+        }
+    }
+
+    function handlePathInput(value) {
+        if (!value || value.trim() === "") {
+            return;
+        }
+
+        const trimmedPath = value.trim();
+
+        if (existingPaths.includes(trimmedPath)) {
+            showMessage("This path is already in your permissions list!", "warning");
+            return;
+        }
+
+        selectedPath = trimmedPath;
+
+        // Enable permission options
+        const permissionOptions = document.getElementById("permissionOptions");
+        permissionOptions.classList.remove("opacity-50", "pointer-events-none");
+
+        // Set default permission
+        setDefaultPermission();
+
+        // Update UI
+        updateSelectedPath();
+    }
+
+    function suggestPath(path) {
+        document.getElementById("pathInput").value = path;
+        handlePathInput(path);
+    }
+
+    async function isValidPath(path) {
+        if (!path || typeof path !== "string") {
+            return false;
+        }
+
+        try {
+            // Get system info from server
+            const response = await fetch("http://localhost:20252/api/system-info");
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    if (data.platform === "win32") {
+                        // Windows path validation
+                        // Allow paths like C:\path or \\network\path
+                        return /^([a-zA-Z]:\\|\\\\)[\w\s\-\\/\\.]+$/.test(path);
+                    } else {
+                        // Unix-like path validation (Linux, macOS)
+                        return path.startsWith("/") && path.length > 1;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Failed to get system information:", error);
+        }
+
+        // Fallback validation - just check if it's not empty
+        return path.length > 0;
+    }
+
+    function updateSelectedPath() {
+        const pathElement = document.getElementById("selectedPath");
+        if (selectedPath) {
+            const displayPath = getDisplayPath(selectedPath);
+            pathElement.textContent = displayPath;
+            pathElement.classList.remove("text-gray-600");
+            pathElement.classList.add("text-gray-800");
+            pathElement.setAttribute("title", selectedPath);
+        }
+        updateAddButton();
+    }
+
+    function getDisplayPath(path) {
+        if (path && !path.includes("/")) {
+            return path;
+        }
+
+        if (!path || !path.includes("/")) {
+            return path;
+        }
+
+        const parts = path.split("/").filter((part) => part.length > 0);
+
+        if (parts.length <= 2) {
+            return path;
+        }
+
+        let projectStartIndex = -1;
+
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (
+                part.includes("-") ||
+                part.includes("_") ||
+                (part.match(/[A-Z]/) && part.match(/[a-z]/))
+            ) {
+                projectStartIndex = i;
+                break;
+            }
+        }
+
+        let result;
+        if (projectStartIndex !== -1) {
+            result = parts.slice(projectStartIndex).join("/");
+        } else {
+            result = parts.slice(-2).join("/");
+        }
+
+        return result;
+    }
+
+    function enablePermissionOptions() {
+        const permissionOptions = document.getElementById("permissionOptions");
+        permissionOptions.classList.remove("opacity-50", "pointer-events-none");
+    }
+
+    function setDefaultPermission() {
+        const readOnlyRadio = document.querySelector(
+            'input[name="permission"][value="read"]'
+        );
+        readOnlyRadio.checked = true;
+        selectedPermission = "read";
+        updatePermissionSelection();
+    }
+
+    function updatePermissionSelection() {
+        const radios = document.querySelectorAll('input[name="permission"]');
+        radios.forEach((radio) => {
+            if (radio.checked) {
+                selectedPermission = radio.value;
+            }
+        });
+        updateAddButton();
+    }
+
+    function updateAddButton() {
+        const btn = document.getElementById("addPermissionBtn");
+        btn.disabled = !selectedPath || !selectedPermission || !isServerConnected;
+    }
+
+    function addPermission() {
+        if (!selectedPath || !selectedPermission || !isServerConnected) return;
+
+        addPermissionToList(selectedPath, selectedPermission, true);
+        resetForm();
+        showUnsavedChanges();
+    }
+
+    function addPermissionToList(fullPath, permission, isPending) {
+        const permissionsList = document.getElementById("permissionsList");
+        const isReadOnly = permission === "read";
+
+        const item = document.createElement("div");
+        item.className = `permission-item p-3 sm:p-4 bg-gradient-to-r ${
+            isReadOnly
+                ? "from-blue-50 to-blue-100 border-blue-200"
+                : "from-purple-50 to-purple-100 border-purple-200"
+        } rounded-xl border-2 hover:shadow-md transition-all`;
+        item.setAttribute("data-full-path", fullPath);
+        item.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-medium text-gray-800 text-sm sm:text-base break-all path-display" title="${fullPath}">${fullPath}</p>
+                                ${
+            isPending
+                ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 pending-indicator">Pending</span>'
+                : ""
+        }
+                            </div>
+                            <p class="${
+            isReadOnly ? "text-blue-600" : "text-purple-600"
+        } text-xs sm:text-sm mt-1">
+                                ${isReadOnly ? "👀 Read only" : "✨ Read & Write"}
+                            </p>
+                        </div>
+                        <button onclick="removePermission(this)" class="ml-3 text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+
+        permissionsList.appendChild(item);
+        existingPaths.push(fullPath);
+    }
+
+    function resetForm() {
+        selectedPath = "";
+        selectedPermission = "";
+
+        // Clear the path input field
+        document.getElementById("pathInput").value = "";
+
+        // Uncheck all permission radio buttons
+        document
+            .querySelectorAll('input[name="permission"]')
+            .forEach((radio) => (radio.checked = false));
+
+        // Disable permission options until a path is selected
+        const permissionOptions = document.getElementById("permissionOptions");
+        permissionOptions.classList.add("opacity-50", "pointer-events-none");
+
+        updateAddButton();
+
+        document.querySelectorAll(".permission-card").forEach((card) => {
+            card.classList.remove("selected");
+        });
+    }
+
+    function removePermission(button) {
+        const item = button.closest(".permission-item");
+        const fullPath = item.getAttribute("data-full-path");
+        const displayPath = item.querySelector(".path-display").textContent;
+
+        removedItems.push({
+            element: item.cloneNode(true),
+            pathText: displayPath,
+            fullPath: fullPath,
+        });
+
+        document.getElementById("removedPath").textContent = displayPath;
+        document.getElementById("removedPath").title = fullPath;
+
+        item.classList.add("removed-item");
+        item.classList.add("undo-animation");
+
+        setTimeout(() => {
+            item.style.display = "none";
+            showUndoSection();
+        }, 500);
+
+        existingPaths = existingPaths.filter((path) => path !== fullPath);
+
+        showUnsavedChanges();
+    }
+
+    function undoRemove() {
+        if (removedItems.length === 0) return;
+
+        const lastRemoved = removedItems.pop();
+        const permissionsList = document.getElementById("permissionsList");
+
+        const newItem = lastRemoved.element;
+        const removeBtn = newItem.querySelector("button");
+        removeBtn.onclick = () => removePermission(removeBtn);
+
+        newItem.classList.remove("removed-item", "undo-animation");
+        newItem.style.display = "block";
+        permissionsList.appendChild(newItem);
+
+        existingPaths.push(lastRemoved.fullPath);
+
+        if (removedItems.length === 0) {
+            document.getElementById("undoSection").classList.add("hidden");
+        }
+
+        showUnsavedChanges();
+    }
+
+    function showUndoSection() {
+        document.getElementById("undoSection").classList.remove("hidden");
+    }
+
+    function showUnsavedChanges() {
+        if (!isServerConnected) return;
+
+        hasUnsavedChanges = true;
+        document.getElementById("pendingChanges").classList.remove("hidden");
+        document.getElementById("saveSection").classList.remove("hidden");
+    }
+
+    async function saveChanges() {
+        if (!isServerConnected) return;
+
+        const permissions = [];
+        const activeItems = document.querySelectorAll(
+            '.permission-item:not([style*="display: none"])'
+        );
+
+        activeItems.forEach((item) => {
+            const fullPath = item.getAttribute("data-full-path");
+            const permissionText = item.querySelector("p:last-child").textContent;
+            const isReadOnly = permissionText.includes("Read only");
+
+            permissions.push({
+                path: fullPath,
+                operation: isReadOnly ? "read" : "write",
+            });
+        });
+
+        try {
+            const response = await fetch("http://localhost:20252/api/write-file", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    filePath: configFilePath,
+                    content: JSON.stringify(permissions, null, 2),
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                document
+                    .querySelectorAll('.permission-item[style*="display: none"]')
+                    .forEach((item) => {
+                        item.remove();
+                    });
+
+                document.querySelectorAll(".pending-indicator").forEach((indicator) => {
+                    indicator.remove();
+                });
+
+                hasUnsavedChanges = false;
+                removedItems = [];
+                document.getElementById("pendingChanges").classList.add("hidden");
+                document.getElementById("saveSection").classList.add("hidden");
+                document.getElementById("undoSection").classList.add("hidden");
+
+                showMessage("Permissions saved successfully!", "success");
+                hideServerError();
+            } else {
+                showMessage("Failed to save permissions: " + result.error, "error");
+            }
+        } catch (error) {
+            console.error("Error saving permissions:", error);
+            showMessage("Network error: " + error.message, "error");
+            showServerError();
+        }
+    }
+
+    function showMessage(text, type = "info") {
+        const colors = {
+            success: "bg-green-500",
+            error: "bg-red-500",
+            warning: "bg-orange-500",
+            info: "bg-blue-500",
+        };
+
+        const message = document.createElement("div");
+        message.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50`;
+        message.textContent = text;
+        document.body.appendChild(message);
+
+        setTimeout(() => {
+            if (document.body.contains(message)) {
+                document.body.removeChild(message);
+            }
+        }, 3000);
+    }
+</script>
+</body>
+</html>

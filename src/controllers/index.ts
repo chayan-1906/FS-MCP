@@ -1,0 +1,1 @@
+export { setupMcpTools } from './ToolsController';

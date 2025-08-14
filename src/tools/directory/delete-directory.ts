@@ -1,13 +1,13 @@
 import z from "zod";
 import * as fs from "fs/promises";
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-import {sendError} from "mcp-utils/utils";
-import {transport} from "../../server";
-import {tools} from "../../utils/constants";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { sendError } from "mcp-utils/utils";
+import { transport } from "../../server";
+import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
 
 const deleteDirectory = async (dirPath: string, recursive: boolean = false) => {
-    const fullPath = resolvePath(dirPath);
+    const fullPath = await resolvePath(dirPath, 'write');
 
     if (recursive) {
         await fs.rm(fullPath, {recursive: true, force: true});

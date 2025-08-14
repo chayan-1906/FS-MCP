@@ -1,21 +1,30 @@
 const tools = {
     // directory
-    listDirectory: "list-directory", // ✅
-    createDirectory: "create-directory", // ✅
-    deleteDirectory: "delete-directory", // ✅
+    listDirectory: "list-directory",
+    createDirectory: "create-directory",
+    deleteDirectory: "delete-directory",
+    getAllowedDirectories: "get-allowed-directories",
 
     // file
-    getFileInfo: "get-file-info", // ✅
-    readFile: "read-file", // ✅
-    writeFile: "write-file", // can't create any files except .txt
-    copyFile: "copy-file", // ✅
-    moveFile: "move-file", // ✅
-    deleteFile: "delete-file", // ✅
-    searchFileDirectory: "search-file-directory", // ✅
+    readFile: "read-file",
+    writeFile: "write-file",
+    createExcel: "create-excel",
+    readExcel: "read-excel",
+    createPresentation: "create-presentation",
+    readPresentation: "read-presentation",
+    createDocument: "create-document",
+    readDocument: "read-document",
+    copyFile: "copy-file",
+    deleteFile: "delete-file",
+
+    getFileDirectoryInfo: "get-file-directory-info",
+    searchFileDirectory: "search-file-directory",
+    moveRenameFileDirectory: "move-rename-file-directory",
+    runShellCommand: 'run-shell-command',
 };
 
 const constants = {
     fsConfigFile: "file_system_config.json",
 };
 
-export {tools, constants};
+export { tools, constants };

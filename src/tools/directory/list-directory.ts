@@ -1,14 +1,14 @@
 import z from "zod";
 import path from "path";
 import * as fs from "fs/promises";
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-import {sendError} from "mcp-utils/utils";
-import {transport} from "../../server";
-import {tools} from "../../utils/constants";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { sendError } from "mcp-utils/utils";
+import { transport } from "../../server";
+import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
 
 const listDirectory = async (dirPath: string = ".") => {
-    const fullPath = resolvePath(dirPath);
+    const fullPath = await resolvePath(dirPath, 'read');
     const items = await fs.readdir(fullPath, {withFileTypes: true});
 
     const result = await Promise.all(

@@ -1,13 +1,13 @@
 import z from "zod";
 import * as fs from "fs/promises";
-import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-import {sendError} from "mcp-utils/utils";
-import {transport} from "../../server";
-import {tools} from "../../utils/constants";
-import resolvePath from "../../utils/resolvePath";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { sendError } from "mcp-utils/utils";
+import { transport } from "../server";
+import { tools } from "../utils/constants";
+import resolvePath from "../utils/resolvePath";
 
-const getFileInfo = async (filePath: string) => {
-    const fullPath = resolvePath(filePath);
+const getFileDirectoryInfo = async (filePath: string) => {
+    const fullPath = await resolvePath(filePath, 'read');
     const stats = await fs.stat(fullPath);
 
     const fileInfo = {
@@ -28,14 +28,14 @@ const getFileInfo = async (filePath: string) => {
 
 export const registerTool = (server: McpServer) => {
     server.tool(
-        tools.getFileInfo,
-        "Retrieves metadata about a file",
+        tools.getFileDirectoryInfo,
+        "Retrieves metadata about a file or directory",
         {
             filePath: z.string().describe("Absolute or base-relative path to the file or directory")
         },
         async ({filePath}) => {
             try {
-                const result = await getFileInfo(filePath);
+                const result = await getFileDirectoryInfo(filePath);
 
                 return {
                     content: [
@@ -46,12 +46,12 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to get file info: ${error.message}`), tools.getFileInfo);
+                sendError(transport, new Error(`Failed to get file/directory info: ${error.message}`), tools.getFileDirectoryInfo);
                 return {
                     content: [
                         {
                             type: "text" as const,
-                            text: `Failed to get file info ❌: ${error.message}`,
+                            text: `Failed to get file/directory info ❌: ${error.message}`,
                         },
                     ],
                 };
