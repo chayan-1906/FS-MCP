@@ -1,4 +1,3 @@
-import os from "os";
 import path from "path";
 import fs from "fs/promises";
 import { getClaudeConfigDir, printInConsole } from "mcp-utils/utils";
@@ -17,10 +16,10 @@ export const getAllowedRoots = async () => {
         if (error.code === 'ENOENT') {
             await printInConsole(transport, `Config file not found, creating with default permissions`);
 
-            const platform = os.platform();
-            const homedir = os.homedir();
+            const defaultPath = getClaudeConfigDir();
 
-            let defaultPath;
+            /*const platform = os.platform();
+            const homedir = os.homedir();
 
             switch (platform) {
                 case "darwin":
@@ -34,7 +33,7 @@ export const getAllowedRoots = async () => {
                     break;
                 default:
                     defaultPath = path.join(homedir, ".claude");
-            }
+            }*/
 
             const defaultRoots = [
                 {
