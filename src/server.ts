@@ -114,6 +114,13 @@ killPortOnLaunch(PORT).then(async () => {
     app.listen(PORT, async () => {
         await printInConsole(transport, `Server running on http://localhost:${PORT}, started in ${Date.now() - startTime}ms`);
 
+        try {
+            const {getAllowedRoots} = await import("./utils/getAllowedRoots");
+            await getAllowedRoots();
+        } catch (error: any) {
+            await printInConsole(transport, `Failed to initialize file_system_config.json: ${error.message}`);
+        }
+
         const {entry} = setEntry("") as any;
         await addOrUpdateMCPServer(serverName, entry);
         await startMcp();

@@ -35,12 +35,13 @@ export const getAllowedRoots = async () => {
                     defaultPath = path.join(homedir, ".claude");
             }*/
 
-            const defaultRoots = [
+            const defaultRoots: object[] = [];
+            /*const defaultRoots = [
                 {
                     path: defaultPath,
                     operation: "write",
                 },
-            ];
+            ];*/
 
             try {
                 const dir = path.dirname(filePath);
