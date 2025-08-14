@@ -7,28 +7,35 @@ import { transport } from "../../server";
 import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
 
-export const writeFile = async (filePath: string, content: string, encoding: string = "utf8") => {
+export const createFile = async (filePath: string) => {
     const fullPath = await resolvePath(filePath, 'write');
+
+    try {
+        await fs.access(fullPath);
+        throw new Error(`File already exists: ${filePath}`);
+    } catch (error: any) {
+        if (error.code !== 'ENOENT') {
+            throw error;
+        }
+    }
 
     const parentDir = path.dirname(fullPath);
     await fs.mkdir(parentDir, {recursive: true});
 
-    await fs.writeFile(fullPath, content, encoding as BufferEncoding);
-    return `File written successfully: ${filePath} ✅`;
+    await fs.writeFile(fullPath, '', 'utf8');
+    return `File created successfully: ${filePath} ✅`;
 }
 
 export const registerTool = (server: McpServer) => {
     server.tool(
-        tools.writeFile,
-        "Writes content to a file at the specified path, creating or overwriting the file",
+        tools.createFile,
+        "Creates a new empty file at the specified path",
         {
-            filePath: z.string().describe("Absolute or base-relative path to the file to write"),
-            content: z.string().describe("Text content to write into the file"),
-            encoding: z.enum(["utf8", "ascii", "base64", "hex"]).optional().describe("Encoding to use when writing the file. Defaults to 'utf8'")
+            filePath: z.string().describe("Absolute or base-relative path to the file to create")
         },
-        async ({filePath, content, encoding}) => {
+        async ({filePath}) => {
             try {
-                const result = await writeFile(filePath, content, encoding);
+                const result = await createFile(filePath);
 
                 return {
                     content: [
@@ -39,12 +46,12 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to write file: ${error.message}`), tools.writeFile);
+                sendError(transport, new Error(`Failed to create file: ${error.message}`), tools.createFile);
                 return {
                     content: [
                         {
                             type: "text" as const,
-                            text: `Failed to write file ❌: ${error.message}`,
+                            text: `Failed to create file ❌: ${error.message}`,
                         },
                     ],
                 };

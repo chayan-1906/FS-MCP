@@ -8,6 +8,7 @@ const tools = {
     // file
     readFile: "read-file",
     writeFile: "write-file",
+    createFile: "create-file",
     createExcel: "create-excel",
     readExcel: "read-excel",
     createPresentation: "create-presentation",
