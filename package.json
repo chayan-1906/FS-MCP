@@ -1,12 +1,7 @@
 {
   "name": "fs-mcp",
   "version": "1.0.0",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    "./utils": "./dist/utils/index.js",
-    "./controllers": "./dist/controllers/index.js"
-  },
+  "main": "src/server.js",
   "keywords": [
     "model-context-protocol",
     "file-system",
@@ -19,11 +14,8 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "start": "ts-node src/server.ts",
     "dev": "ts-node src/server.ts",
     "build": "tsc",
-    "build:copy-assets": "node -e \"const fs=require('fs'),path=require('path');const src='src/public',dest='dist/public';if(fs.existsSync(src)){fs.mkdirSync(path.dirname(dest),{recursive:true});fs.cpSync(src,dest,{recursive:true})}\"",
-    "build:full": "npm run build && npm run build:copy-assets",
     "bundle": "ncc build dist/server.js -o build",
     "package": "ts-node src/scripts/package-script.ts"
   },
@@ -42,11 +34,11 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.2",
+    "@modelcontextprotocol/sdk": "^1.17.3",
     "@types/express": "^5.0.3",
     "@vercel/ncc": "^0.38.3",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }
