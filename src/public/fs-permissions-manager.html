@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>FS-MCP Permissions Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-            rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"/>
     <style>
         body {
             font-family: "Inter", sans-serif;
@@ -54,11 +52,9 @@
     <div class="bg-white shadow-sm p-4 sm:p-6">
         <div class="text-center">
             <h1 class="text-2xl sm:text-4xl font-bold mb-2">
-                        <span
-                                class="bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent"
-                        >
-                            File System Permissions
-                        </span>
+                <span class="bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                    File System Permissions
+                </span>
             </h1>
             <p class="text-sm sm:text-base text-gray-600">
                 Control AI access to your files and folders
@@ -80,25 +76,18 @@
     <div class="flex-1 overflow-hidden">
         <div class="h-full grid grid-cols-1 lg:grid-cols-2 gap-0">
             <!-- Left Column: Add Permission -->
-            <div
-                    class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 sm:p-8 overflow-y-auto"
-            >
+            <div class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 sm:p-8 overflow-y-auto">
                 <div class="max-w-md mx-auto">
-                    <div
-                            class="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8"
-                    >
-                        <h2
-                                class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center"
-                        >
+                    <div class="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8">
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center">
                             Add New Permission
                         </h2>
 
                         <!-- File/Folder Selection -->
                         <div class="mb-6">
-                            <label
-                                    class="block text-gray-700 font-medium mb-3 text-sm sm:text-base"
-                            >Enter File or Folder Path</label
-                            >
+                            <label class="block text-gray-700 font-medium mb-3 text-sm sm:text-base">
+                                Enter File or Folder Path
+                            </label>
                             <div class="relative">
                                 <input
                                         type="text"
@@ -110,10 +99,8 @@
                                 <div class="mt-2">
                                     <p class="text-xs text-gray-500 mb-2">Common paths:</p>
                                     <div class="flex flex-wrap gap-2" id="pathSuggestions">
-                                        <button
-                                                onclick="suggestPath('/Users')"
-                                                class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-                                        >
+                                        <button onclick="suggestPath('/Users')"
+                                                class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors">
                                             /Users
                                         </button>
                                         <!-- Path suggestions will be added here dynamically -->
@@ -124,58 +111,30 @@
 
                         <!-- Permission Level -->
                         <div class="mb-6">
-                            <label
-                                    class="block text-gray-700 font-medium mb-4 text-sm sm:text-base"
-                            >Permission Level</label
-                            >
-                            <div
-                                    id="permissionOptions"
-                                    class="space-y-3 opacity-50 pointer-events-none"
-                            >
+                            <label class="block text-gray-700 font-medium mb-4 text-sm sm:text-base">
+                                Permission Level
+                            </label>
+                            <div id="permissionOptions" class="space-y-3 opacity-50 pointer-events-none">
                                 <label class="block cursor-pointer">
-                                    <input
-                                            type="radio"
-                                            name="permission"
-                                            value="read"
-                                            class="peer sr-only"
-                                            onchange="updatePermissionSelection()"
-                                    />
-                                    <div
-                                            class="permission-card p-4 sm:p-5 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl sm:rounded-2xl border-2 border-transparent peer-checked:border-blue-400 peer-checked:shadow-lg transition-all hover:scale-105"
-                                    >
+                                    <input type="radio" name="permission" value="read" class="peer sr-only"
+                                           onchange="updatePermissionSelection()"/>
+                                    <div class="permission-card p-4 sm:p-5 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl sm:rounded-2xl border-2 border-transparent peer-checked:border-blue-400 peer-checked:shadow-lg transition-all hover:scale-105">
                                         <div class="flex items-center gap-3 sm:gap-4">
-                                            <div
-                                                    class="permission-icon w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center shadow-lg"
-                                            >
-                                                <svg
-                                                        class="w-5 h-5 sm:w-6 sm:h-6 text-white"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                                    ></path>
-                                                    <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                                    ></path>
+                                            <div class="permission-icon w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center shadow-lg">
+                                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none"
+                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2"
+                                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                 </svg>
                                             </div>
                                             <div>
-                                                <div
-                                                        class="font-bold text-gray-800 text-sm sm:text-base"
-                                                >
+                                                <div class="font-bold text-gray-800 text-sm sm:text-base">
                                                     Read Only Access
                                                 </div>
-                                                <div
-                                                        class="text-xs sm:text-sm text-gray-600"
-                                                >
+                                                <div class="text-xs sm:text-sm text-gray-600">
                                                     View and list files only
                                                 </div>
                                             </div>
@@ -184,43 +143,24 @@
                                 </label>
 
                                 <label class="block cursor-pointer">
-                                    <input
-                                            type="radio"
-                                            name="permission"
-                                            value="write"
-                                            class="peer sr-only"
-                                            onchange="updatePermissionSelection()"
-                                    />
-                                    <div
-                                            class="permission-card p-4 sm:p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl border-2 border-transparent peer-checked:border-purple-400 peer-checked:shadow-lg transition-all hover:scale-105"
-                                    >
+                                    <input type="radio" name="permission" value="write" class="peer sr-only"
+                                           onchange="updatePermissionSelection()"/>
+                                    <div class="permission-card p-4 sm:p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl border-2 border-transparent peer-checked:border-purple-400 peer-checked:shadow-lg transition-all hover:scale-105">
                                         <div class="flex items-center gap-3 sm:gap-4">
-                                            <div
-                                                    class="permission-icon w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg"
-                                            >
-                                                <svg
-                                                        class="w-5 h-5 sm:w-6 sm:h-6 text-white"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                    ></path>
+                                            <div class="permission-icon w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none"
+                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2"
+                                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                    />
                                                 </svg>
                                             </div>
                                             <div>
-                                                <div
-                                                        class="font-bold text-gray-800 text-sm sm:text-base"
-                                                >
+                                                <div class="font-bold text-gray-800 text-sm sm:text-base">
                                                     Read & Write Access
                                                 </div>
-                                                <div
-                                                        class="text-xs sm:text-sm text-gray-600"
-                                                >
+                                                <div class="text-xs sm:text-sm text-gray-600">
                                                     Full control over files
                                                 </div>
                                             </div>
@@ -230,12 +170,8 @@
                             </div>
                         </div>
 
-                        <button
-                                id="addPermissionBtn"
-                                onclick="addPermission()"
-                                disabled
-                                class="w-full py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-bold rounded-xl sm:rounded-2xl hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base"
-                        >
+                        <button id="addPermissionBtn" onclick="addPermission()" disabled
+                                class="w-full py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-bold rounded-xl sm:rounded-2xl hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base">
                             Add Permission
                         </button>
                     </div>
@@ -251,14 +187,10 @@
                         </h2>
                         <div class="flex items-center gap-3">
                             <div id="pendingChanges" class="hidden">
-                                        <span
-                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
-                                        >
-                                            <span
-                                                    class="w-2 h-2 bg-amber-400 rounded-full mr-2"
-                                            ></span>
-                                            Unsaved changes
-                                        </span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                    <span class="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
+                                    Unsaved changes
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -268,48 +200,14 @@
                     </div>
 
                     <!-- Undo Section -->
-                    <div
-                            id="undoSection"
-                            class="hidden mt-6 p-4 bg-amber-50 rounded-xl border-2 border-amber-200"
-                    >
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <svg
-                                        class="w-5 h-5 text-amber-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                >
-                                    <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-                                    ></path>
-                                </svg>
-                                <div class="text-amber-800 font-medium text-sm">
-                                    <div>Removing permission</div>
-                                    <div
-                                            id="removedPath"
-                                            class="text-xs text-amber-700 mt-1"
-                                    ></div>
-                                </div>
-                            </div>
-                            <button
-                                    onclick="undoRemove()"
-                                    class="text-amber-600 hover:text-amber-800 font-medium text-sm"
-                            >
-                                Undo
-                            </button>
-                        </div>
+                    <div id="undoSection" class="hidden mt-6">
+                        <!-- Dynamic undo boxes will be inserted here -->
                     </div>
 
                     <!-- Save Changes -->
                     <div id="saveSection" class="hidden mt-6">
-                        <button
-                                onclick="saveChanges()"
-                                class="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors text-sm sm:text-base"
-                        >
+                        <button onclick="saveChanges()"
+                                class="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors text-sm sm:text-base">
                             Save Changes
                         </button>
                     </div>
@@ -336,10 +234,8 @@
                 if (data.success) {
                     const suggestionsDiv = document.getElementById("pathSuggestions");
 
-                    // Clear existing suggestions
                     suggestionsDiv.innerHTML = "";
 
-                    // Add each common path as a button
                     data.commonPaths.forEach(({path, label}) => {
                         const button = document.createElement("button");
                         button.className =
@@ -350,7 +246,6 @@
                         suggestionsDiv.appendChild(button);
                     });
 
-                    // Update path input placeholder based on OS
                     const pathInput = document.getElementById("pathInput");
                     const placeholder =
                         data.platform === "win32"
@@ -361,7 +256,6 @@
             }
         } catch (error) {
             console.error("Failed to get system information:", error);
-            // If we can't get the system info, remove the suggestions section
             const suggestionsContainer = document.querySelector(".mt-2");
             if (suggestionsContainer) {
                 suggestionsContainer.style.display = "none";
@@ -373,7 +267,6 @@
         initializeApp();
         initializePathSuggestions();
 
-        // Check server status every 30 seconds
         setInterval(checkServerStatus, 30000);
     });
 
@@ -381,7 +274,7 @@
         await checkServerStatus();
         await getConfigFilePath();
         await loadExistingPermissions();
-        checkFileSystemAccessSupport();
+        // checkFileSystemAccessSupport();
     }
 
     async function checkServerStatus() {
@@ -403,11 +296,7 @@
             console.log("File System Access API supported");
         } else {
             console.log("File System Access API not supported, using fallback");
-            // Show a message to the user about limited functionality
-            showMessage(
-                "File System Access API not available. You may need to manually enter paths.",
-                "warning"
-            );
+            showMessage("File System Access API not available. You may need to manually enter paths.", "warning");
         }
     }
 
@@ -514,35 +403,6 @@
         handlePathInput(path);
     }
 
-    async function isValidPath(path) {
-        if (!path || typeof path !== "string") {
-            return false;
-        }
-
-        try {
-            // Get system info from server
-            const response = await fetch("http://localhost:20252/api/system-info");
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    if (data.platform === "win32") {
-                        // Windows path validation
-                        // Allow paths like C:\path or \\network\path
-                        return /^([a-zA-Z]:\\|\\\\)[\w\s\-\\/\\.]+$/.test(path);
-                    } else {
-                        // Unix-like path validation (Linux, macOS)
-                        return path.startsWith("/") && path.length > 1;
-                    }
-                }
-            }
-        } catch (error) {
-            console.error("Failed to get system information:", error);
-        }
-
-        // Fallback validation - just check if it's not empty
-        return path.length > 0;
-    }
-
     function updateSelectedPath() {
         const pathElement = document.getElementById("selectedPath");
         if (selectedPath) {
@@ -594,15 +454,8 @@
         return result;
     }
 
-    function enablePermissionOptions() {
-        const permissionOptions = document.getElementById("permissionOptions");
-        permissionOptions.classList.remove("opacity-50", "pointer-events-none");
-    }
-
     function setDefaultPermission() {
-        const readOnlyRadio = document.querySelector(
-            'input[name="permission"][value="read"]'
-        );
+        const readOnlyRadio = document.querySelector('input[name="permission"][value="read"]');
         readOnlyRadio.checked = true;
         selectedPermission = "read";
         updatePermissionSelection();
@@ -636,22 +489,14 @@
         const isReadOnly = permission === "read";
 
         const item = document.createElement("div");
-        item.className = `permission-item p-3 sm:p-4 bg-gradient-to-r ${
-            isReadOnly
-                ? "from-blue-50 to-blue-100 border-blue-200"
-                : "from-purple-50 to-purple-100 border-purple-200"
-        } rounded-xl border-2 hover:shadow-md transition-all`;
+        item.className = `permission-item p-3 sm:p-4 bg-gradient-to-r ${isReadOnly ? "from-blue-50 to-blue-100 border-blue-200" : "from-purple-50 to-purple-100 border-purple-200"} rounded-xl border-2 hover:shadow-md transition-all`;
         item.setAttribute("data-full-path", fullPath);
         item.innerHTML = `
                     <div class="flex items-center justify-between">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <p class="font-medium text-gray-800 text-sm sm:text-base break-all path-display" title="${fullPath}">${fullPath}</p>
-                                ${
-            isPending
-                ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 pending-indicator">Pending</span>'
-                : ""
-        }
+                                ${isPending ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 pending-indicator">Pending</span>' : ""}
                             </div>
                             <p class="${
             isReadOnly ? "text-blue-600" : "text-purple-600"
@@ -675,15 +520,12 @@
         selectedPath = "";
         selectedPermission = "";
 
-        // Clear the path input field
         document.getElementById("pathInput").value = "";
 
-        // Uncheck all permission radio buttons
         document
             .querySelectorAll('input[name="permission"]')
             .forEach((radio) => (radio.checked = false));
 
-        // Disable permission options until a path is selected
         const permissionOptions = document.getElementById("permissionOptions");
         permissionOptions.classList.add("opacity-50", "pointer-events-none");
 
@@ -705,29 +547,25 @@
             fullPath: fullPath,
         });
 
-        document.getElementById("removedPath").textContent = displayPath;
-        document.getElementById("removedPath").title = fullPath;
-
         item.classList.add("removed-item");
         item.classList.add("undo-animation");
 
-        setTimeout(() => {
-            item.style.display = "none";
-            showUndoSection();
-        }, 500);
+        updateRemovedPathsDisplay();
+
+        setTimeout(() => item.style.display = "none", 500);
 
         existingPaths = existingPaths.filter((path) => path !== fullPath);
 
         showUnsavedChanges();
     }
 
-    function undoRemove() {
-        if (removedItems.length === 0) return;
+    function undoSpecificRemoval(index) {
+        if (index < 0 || index >= removedItems.length) return;
 
-        const lastRemoved = removedItems.pop();
+        const removedItem = removedItems[index];
         const permissionsList = document.getElementById("permissionsList");
 
-        const newItem = lastRemoved.element;
+        const newItem = removedItem.element;
         const removeBtn = newItem.querySelector("button");
         removeBtn.onclick = () => removePermission(removeBtn);
 
@@ -735,17 +573,56 @@
         newItem.style.display = "block";
         permissionsList.appendChild(newItem);
 
-        existingPaths.push(lastRemoved.fullPath);
+        existingPaths.push(removedItem.fullPath);
 
-        if (removedItems.length === 0) {
-            document.getElementById("undoSection").classList.add("hidden");
-        }
+        removedItems.splice(index, 1);
 
+        updateRemovedPathsDisplay();
         showUnsavedChanges();
     }
 
-    function showUndoSection() {
-        document.getElementById("undoSection").classList.remove("hidden");
+    function createUndoBox(removedItem, index) {
+        const undoBox = document.createElement("div");
+        undoBox.className = "mt-3 p-4 bg-amber-50 rounded-xl border-2 border-amber-200";
+        undoBox.setAttribute("data-undo-index", index);
+
+        undoBox.innerHTML = `
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <div class="text-amber-800 font-medium text-sm">
+                        <div>Removing permission</div>
+                        <div class="text-xs text-amber-700 mt-1" title="${removedItem.fullPath}">${removedItem.pathText}</div>
+                    </div>
+                </div>
+                <button onclick="undoSpecificRemoval(${index})" class="text-amber-600 hover:text-amber-800 font-medium text-sm">
+                    Undo
+                </button>
+            </div>
+        `;
+
+        return undoBox;
+    }
+
+    function updateRemovedPathsDisplay() {
+        const undoSection = document.getElementById("undoSection");
+
+        const existingBoxes = undoSection.querySelectorAll('[data-undo-index]');
+        existingBoxes.forEach(box => box.remove());
+
+        if (removedItems.length === 0) {
+            undoSection.classList.add("hidden");
+            return;
+        }
+
+        removedItems.forEach((removedItem, index) => {
+            const undoBox = createUndoBox(removedItem, index);
+            undoSection.appendChild(undoBox);
+        });
+
+        undoSection.classList.remove("hidden");
     }
 
     function showUnsavedChanges() {

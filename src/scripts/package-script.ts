@@ -10,6 +10,6 @@ const targets = isMacOS
 
 const cmd = isMacOS
     ? `npm run build && npm run bundle && pkg build/index.js --target ${targets} --output dist/file-system`
-    : 'ts-node src/scripts/embed-html.ts && npm run build && npm run bundle && pkg build/index.js --target ${targets} --output dist/file-system';
+    : `ts-node src/scripts/embed-html.ts && npm run build && npm run bundle && pkg build/index.js --target ${targets} --output dist/file-system`;
 
 execSync(cmd, {stdio: 'inherit'});

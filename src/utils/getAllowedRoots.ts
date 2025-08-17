@@ -10,7 +10,8 @@ export const getAllowedRoots = async () => {
     try {
         const content = await fs.readFile(filePath, "utf8");
         const ALLOWED_ROOTS = JSON.parse(content);
-        await printInConsole(transport, `ALLOWED_ROOTS: ${JSON.stringify(ALLOWED_ROOTS, null, 2)}`);
+        await printInConsole(transport, "ALLOWED_ROOTS loaded from config file ✅");
+        // await printInConsole(transport, `ALLOWED_ROOTS: ${JSON.stringify(ALLOWED_ROOTS, null, 2)}`);
         return ALLOWED_ROOTS;
     } catch (error: any) {
         if (error.code === 'ENOENT') {
