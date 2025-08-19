@@ -3,6 +3,10 @@
 This project includes a simple HTML-based permissions manager for controlling file system access in the MCP (Model
 Context Protocol) server.
 
+---
+
+![logo](https://raw.githubusercontent.com/chayan-1906/FS-MCP/master/file-system.png)
+
 ## Features
 
 The File System Permissions Manager provides a user-friendly interface to:
