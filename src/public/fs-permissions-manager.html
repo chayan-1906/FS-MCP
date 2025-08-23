@@ -186,6 +186,14 @@
                             Active Permissions
                         </h2>
                         <div class="flex items-center gap-3">
+                            <button id="clearAllBtn" onclick="clearAllPermissions()"
+                                    class="hidden inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 text-red-600 hover:text-red-700 text-xs font-medium rounded-full border border-red-200 hover:border-red-300 transition-all duration-200 hover:shadow-md">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Clear All
+                            </button>
                             <div id="pendingChanges" class="hidden">
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                                     <span class="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
@@ -380,11 +388,13 @@
                     permissions.forEach((permission) => {
                         addPermissionToList(permission.path, permission.operation, false);
                     });
+                    updateClearAllButtonVisibility();
                     hideServerError();
                 } else {
                     // If file doesn't exist or is empty, initialize with empty array
                     console.log("No existing permissions found, starting fresh");
                     updateEmptyState();
+                    updateClearAllButtonVisibility();
                     hideServerError();
                 }
             } else {
@@ -538,6 +548,7 @@
         permissionsList.appendChild(item);
         existingPaths.push(fullPath);
         updateEmptyState();
+        updateClearAllButtonVisibility();
     }
 
     function resetForm() {
@@ -579,6 +590,7 @@
         setTimeout(() => {
             item.style.display = "none";
             updateEmptyState();
+            updateClearAllButtonVisibility();
         }, 500);
 
         existingPaths = existingPaths.filter((path) => path !== fullPath);
@@ -606,6 +618,7 @@
 
         updateRemovedPathsDisplay();
         updateEmptyState();
+        updateClearAllButtonVisibility();
         showUnsavedChanges();
     }
 
@@ -712,6 +725,7 @@
                 document.getElementById("undoSection").classList.add("hidden");
 
                 updateEmptyState();
+                updateClearAllButtonVisibility();
                 showMessage("Permissions saved successfully!", "success");
                 hideServerError();
             } else {
@@ -739,6 +753,54 @@
             emptyState.classList.remove("hidden");
         } else {
             emptyState.classList.add("hidden");
+        }
+    }
+
+    function clearAllPermissions() {
+        const activeItems = document.querySelectorAll('.permission-item:not([style*="display: none"])');
+
+        if (activeItems.length === 0) return;
+
+        // Remove all active permissions
+        activeItems.forEach(item => {
+            const fullPath = item.getAttribute("data-full-path");
+            const displayPath = item.querySelector(".path-display").textContent;
+
+            // Add to removed items
+            removedItems.push({
+                element: item.cloneNode(true),
+                pathText: displayPath,
+                fullPath: fullPath,
+            });
+
+            // Mark as removed
+            item.classList.add("removed-item");
+            item.classList.add("undo-animation");
+
+            // Remove from existing paths
+            existingPaths = existingPaths.filter(path => path !== fullPath);
+
+            // Hide after animation
+            setTimeout(() => {
+                item.style.display = "none";
+            }, 500);
+        });
+
+        // Update UI
+        updateRemovedPathsDisplay();
+        updateEmptyState();
+        updateClearAllButtonVisibility();
+        showUnsavedChanges();
+    }
+
+    function updateClearAllButtonVisibility() {
+        const clearAllBtn = document.getElementById("clearAllBtn");
+        const activeItems = document.querySelectorAll('.permission-item:not([style*="display: none"])');
+
+        if (activeItems.length > 0) {
+            clearAllBtn.classList.remove("hidden");
+        } else {
+            clearAllBtn.classList.add("hidden");
         }
     }
 
