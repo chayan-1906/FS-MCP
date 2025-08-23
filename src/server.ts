@@ -11,6 +11,7 @@ import { PORT } from "./config/config";
 import { setupMcpTools } from "./controllers";
 import { modifyFile } from "./tools/file/modify-file";
 import { SystemControllerRoute } from "./controllers/SystemController";
+import { embeddedHtmlErrorPage, htmlFileErrorPage } from "./utils/errorPages";
 
 const app = express();
 export const transport = new StdioServerTransport();
@@ -87,16 +88,7 @@ app.get("/", async (req, res) => {
             const embeddedModule = require("./utils/embeddedHtml");
             res.send(embeddedModule.getEmbeddedHTML());
         } catch (error: any) {
-            res.send(`
-                <html>
-                    <head><title>FS-MCP Server</title></head>
-                    <body>
-                        <h1>FS-MCP Server is running</h1>
-                        <p>Embedded HTML not found: ${error.message}</p>
-                        <p>Server is available for API requests.</p>
-                    </body>
-                </html>
-            `);
+            res.send(embeddedHtmlErrorPage(error.message, PORT));
         }
     } else {
         try {
@@ -104,16 +96,8 @@ app.get("/", async (req, res) => {
             const htmlContent = await fs.readFile(htmlPath, "utf8");
             res.send(htmlContent);
         } catch (error: any) {
-            res.send(`
-                <html>
-                    <head><title>FS-MCP Server</title></head>
-                    <body>
-                        <h1>FS-MCP Server is running</h1>
-                        <p>HTML file not found: ${error.message}</p>
-                        <p>Server is available for API requests.</p>
-                    </body>
-                </html>
-            `);
+            const htmlPath = path.join(__dirname, "public", "fs-permissions-manager.html");
+            res.send(htmlFileErrorPage(error.message, PORT, htmlPath));
         }
     }
 });

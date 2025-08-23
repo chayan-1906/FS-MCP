@@ -32,7 +32,7 @@ const resolvePath = async (relativePath: string, operation: 'read' | 'write'): P
         });
 
         if (matchingRoots.length === 0) {
-            throw new Error("Access denied: Path is outside allowed directories ❌");
+            throw new Error(`Access denied: ${path} is outside allowed directories ❌`);
         }
 
         // Sort by path length (descending) to get most specific match first

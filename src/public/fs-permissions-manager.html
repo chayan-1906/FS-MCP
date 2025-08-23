@@ -199,6 +199,28 @@
                         <!-- Empty list - no hardcoded permissions -->
                     </div>
 
+                    <!-- Empty State -->
+                    <div id="emptyState" class="hidden text-center py-12 px-4">
+                        <div class="mx-auto w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">No Permissions Set</h3>
+                        <p class="text-gray-500 text-sm mb-4 max-w-sm mx-auto">
+                            Your AI assistant doesn't have access to any files or folders yet. Add permissions to get
+                            started.
+                        </p>
+                        <div class="inline-flex items-center gap-2 text-xs text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            <span>Use the form on the left to add your first permission</span>
+                        </div>
+                    </div>
+
                     <!-- Undo Section -->
                     <div id="undoSection" class="hidden mt-6">
                         <!-- Dynamic undo boxes will be inserted here -->
@@ -362,6 +384,7 @@
                 } else {
                     // If file doesn't exist or is empty, initialize with empty array
                     console.log("No existing permissions found, starting fresh");
+                    updateEmptyState();
                     hideServerError();
                 }
             } else {
@@ -514,6 +537,7 @@
 
         permissionsList.appendChild(item);
         existingPaths.push(fullPath);
+        updateEmptyState();
     }
 
     function resetForm() {
@@ -552,7 +576,10 @@
 
         updateRemovedPathsDisplay();
 
-        setTimeout(() => item.style.display = "none", 500);
+        setTimeout(() => {
+            item.style.display = "none";
+            updateEmptyState();
+        }, 500);
 
         existingPaths = existingPaths.filter((path) => path !== fullPath);
 
@@ -578,6 +605,7 @@
         removedItems.splice(index, 1);
 
         updateRemovedPathsDisplay();
+        updateEmptyState();
         showUnsavedChanges();
     }
 
@@ -683,6 +711,7 @@
                 document.getElementById("saveSection").classList.add("hidden");
                 document.getElementById("undoSection").classList.add("hidden");
 
+                updateEmptyState();
                 showMessage("Permissions saved successfully!", "success");
                 hideServerError();
             } else {
@@ -692,6 +721,24 @@
             console.error("Error saving permissions:", error);
             showMessage("Network error: " + error.message, "error");
             showServerError();
+        }
+    }
+
+    function updateEmptyState() {
+        const permissionsList = document.getElementById("permissionsList");
+        const emptyState = document.getElementById("emptyState");
+        const undoSection = document.getElementById("undoSection");
+
+        // Count actual permission items that exist in the DOM (not hidden by removal)
+        const activeItems = permissionsList.querySelectorAll('.permission-item:not([style*="display: none"])');
+
+        // Show empty state only if there are no active items AND no pending removals
+        const hasPendingRemovals = !undoSection.classList.contains("hidden") && removedItems.length > 0;
+
+        if (activeItems.length === 0 && !hasPendingRemovals) {
+            emptyState.classList.remove("hidden");
+        } else {
+            emptyState.classList.add("hidden");
         }
     }
 
