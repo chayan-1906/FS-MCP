@@ -185,19 +185,22 @@
                         <h2 class="text-lg sm:text-xl font-bold text-gray-800">
                             Active Permissions
                         </h2>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <button id="clearAllBtn" onclick="clearAllPermissions()"
-                                    class="hidden inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 text-red-600 hover:text-red-700 text-xs font-medium rounded-full border border-red-200 hover:border-red-300 transition-all duration-200 hover:shadow-md">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="hidden inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 text-red-600 hover:text-red-700 text-xs font-medium rounded-full border border-red-200 hover:border-red-300 transition-all duration-200 hover:shadow-md">
+                                <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
-                                Clear All
+                                <span class="hidden sm:inline">Clear All</span>
+                                <span class="sm:hidden">Clear</span>
                             </button>
                             <div id="pendingChanges" class="hidden">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                    <span class="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
-                                    Unsaved changes
+                                <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-transparent">
+                                    <span class="w-2 h-2 bg-amber-400 rounded-full mr-1 sm:mr-2 flex-shrink-0"></span>
+                                    <span class="hidden sm:inline">Unsaved changes</span>
+                                    <span class="sm:hidden">Unsaved</span>
                                 </span>
                             </div>
                         </div>
@@ -413,8 +416,16 @@
 
         const trimmedPath = value.trim();
 
+        // Check if path exists in active permissions
         if (existingPaths.includes(trimmedPath)) {
             showMessage("This path is already in your permissions list!", "warning");
+            return;
+        }
+
+        // Check if path is currently in the removed items (undo section)
+        const isInRemovedItems = removedItems.some(item => item.fullPath === trimmedPath);
+        if (isInRemovedItems) {
+            showMessage("This path is currently being removed. Please undo the removal or save changes first.", "warning");
             return;
         }
 
@@ -575,27 +586,39 @@
         const item = button.closest(".permission-item");
         const fullPath = item.getAttribute("data-full-path");
         const displayPath = item.querySelector(".path-display").textContent;
+        const isPending = item.querySelector(".pending-indicator") !== null;
 
-        removedItems.push({
-            element: item.cloneNode(true),
-            pathText: displayPath,
-            fullPath: fullPath,
-        });
-
-        item.classList.add("removed-item");
-        item.classList.add("undo-animation");
-
-        updateRemovedPathsDisplay();
-
-        setTimeout(() => {
-            item.style.display = "none";
+        if (isPending) {
+            // This is a newly added item that hasn't been saved yet
+            // Just remove it completely without adding to removedItems
+            item.remove();
+            existingPaths = existingPaths.filter((path) => path !== fullPath);
             updateEmptyState();
             updateClearAllButtonVisibility();
-        }, 500);
+            checkUnsavedChangesState();
+        } else {
+            // This is a saved item, add to removedItems for undo capability
+            removedItems.push({
+                element: item.cloneNode(true),
+                pathText: displayPath,
+                fullPath: fullPath,
+            });
 
-        existingPaths = existingPaths.filter((path) => path !== fullPath);
+            item.classList.add("removed-item");
+            item.classList.add("undo-animation");
 
-        showUnsavedChanges();
+            updateRemovedPathsDisplay();
+
+            setTimeout(() => {
+                item.style.display = "none";
+                updateEmptyState();
+                updateClearAllButtonVisibility();
+            }, 500);
+
+            existingPaths = existingPaths.filter((path) => path !== fullPath);
+
+            showUnsavedChanges();
+        }
     }
 
     function undoSpecificRemoval(index) {
@@ -619,7 +642,7 @@
         updateRemovedPathsDisplay();
         updateEmptyState();
         updateClearAllButtonVisibility();
-        showUnsavedChanges();
+        checkUnsavedChangesState();
     }
 
     function createUndoBox(removedItem, index) {
@@ -672,6 +695,24 @@
         hasUnsavedChanges = true;
         document.getElementById("pendingChanges").classList.remove("hidden");
         document.getElementById("saveSection").classList.remove("hidden");
+    }
+
+    function checkUnsavedChangesState() {
+        if (!isServerConnected) return;
+
+        // Check if there are any pending changes (removals or additions)
+        const hasPendingItems = document.querySelectorAll('.pending-indicator').length > 0;
+        const hasRemovedItems = removedItems.length > 0;
+
+        if (!hasPendingItems && !hasRemovedItems) {
+            // No pending changes, hide unsaved changes indicator
+            hasUnsavedChanges = false;
+            document.getElementById("pendingChanges").classList.add("hidden");
+            document.getElementById("saveSection").classList.add("hidden");
+        } else {
+            // Still have pending changes, show unsaved changes indicator
+            showUnsavedChanges();
+        }
     }
 
     async function saveChanges() {
