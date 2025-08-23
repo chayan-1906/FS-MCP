@@ -80,6 +80,17 @@ app.post("/api/initialize-config", async (req, res) => {
 
 app.use("/api", SystemControllerRoute);
 
+app.get("/file-system.png", async (req, res) => {
+    try {
+        const iconPath = path.join(__dirname, "public", "file-system.png");
+        res.setHeader('Content-Type', 'image/png');
+        const iconData = await fs.readFile(iconPath);
+        res.send(iconData);
+    } catch (error: any) {
+        res.status(404).send('Favicon not found');
+    }
+});
+
 app.get("/", async (req, res) => {
     res.setHeader('Content-Type', 'text/html');
 
