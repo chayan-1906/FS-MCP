@@ -13,16 +13,6 @@
             font-family: "Inter", sans-serif;
         }
 
-        .permission-card.selected {
-            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-            border-color: #6366f1;
-            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.2);
-        }
-
-        .permission-card.selected .permission-icon {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        }
-
         .removed-item {
             opacity: 0.6;
             background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
@@ -57,9 +47,7 @@
                     File System Permissions
                 </span>
             </h1>
-            <p class="text-sm sm:text-base text-gray-600">
-                Control AI access to your files and folders
-            </p>
+            <p class="text-sm sm:text-base text-gray-600">Control AI access to your files and folders</p>
         </div>
     </div>
 
@@ -67,9 +55,7 @@
     <div id="serverStatus" class="hidden bg-red-50 border-b border-red-200 p-3">
         <div class="flex items-center justify-center gap-2">
             <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span class="text-red-800 font-medium text-sm"
-            >Server connection lost - permissions cannot be loaded or saved</span
-            >
+            <span class="text-red-800 font-medium text-sm">Server connection lost - permissions cannot be loaded or saved</span>
         </div>
     </div>
 
@@ -80,9 +66,7 @@
             <div class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 sm:p-8 overflow-y-auto">
                 <div class="max-w-md mx-auto">
                     <div class="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8">
-                        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center">
-                            Add New Permission
-                        </h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-6 text-center">Add New Permission</h2>
 
                         <!-- File/Folder Selection -->
                         <div class="mb-6">
@@ -262,7 +246,7 @@
 
     async function initializePathSuggestions() {
         try {
-            const response = await fetch("http://localhost:20252/api/system-info");
+            const response = await fetch(`/api/system-info`);
             if (response.ok) {
                 const data = await response.json();
                 if (data.success) {
@@ -272,8 +256,7 @@
 
                     data.commonPaths.forEach(({path, label}) => {
                         const button = document.createElement("button");
-                        button.className =
-                            "text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors";
+                        button.className = "text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors";
                         button.onclick = () => suggestPath(path);
                         button.textContent = label;
                         button.title = path; // Show full path on hover
@@ -281,15 +264,13 @@
                     });
 
                     const pathInput = document.getElementById("pathInput");
-                    const placeholder =
-                        data.platform === "win32"
-                            ? "Enter full path (e.g., C:\\Users\\Documents\\file.txt)"
-                            : "Enter full path (e.g., /Users/Documents/file.txt)";
-                    pathInput.placeholder = placeholder;
+                    pathInput.placeholder = data.platform === "win32"
+                        ? "Enter full path (e.g., C:\\Users\\Documents\\file.txt)"
+                        : "Enter full path (e.g., /Users/Documents/file.txt)";
                 }
             }
         } catch (error) {
-            console.error("Failed to get system information:", error);
+            console.error("❌ Failed to get system information:", error);
             const suggestionsContainer = document.querySelector(".mt-2");
             if (suggestionsContainer) {
                 suggestionsContainer.style.display = "none";
@@ -301,48 +282,42 @@
         initializeApp();
         initializePathSuggestions();
 
-        setInterval(checkServerStatus, 30000);
+        setInterval(checkServerStatus, 30000);  // 30 sec
     });
 
     async function initializeApp() {
         await checkServerStatus();
         await getConfigFilePath();
         await loadExistingPermissions();
-        // checkFileSystemAccessSupport();
     }
 
     async function checkServerStatus() {
         try {
-            const response = await fetch("http://localhost:20252/api/config-file-path");
+            const response = await fetch(`/api/config-file-path`);
             if (response.ok) {
                 hideServerError();
             } else {
                 showServerError();
             }
         } catch (error) {
-            console.error("Server connection failed:", error);
+            console.error("❌ Server connection failed:", error);
             showServerError();
         }
     }
 
     async function getConfigFilePath() {
         try {
-            const response = await fetch("http://localhost:20252/api/config-file-path");
+            const response = await fetch(`/api/config-file-path`);
             if (response.ok) {
                 const result = await response.json();
                 configFilePath = result.filePath;
                 console.log("Config file path:", configFilePath);
             } else {
-                // Fallback to default path
-                configFilePath =
-                    "/Users/arkabhattacharya/Library/Application Support/Claude/file_system_config.json";
-                console.log("Using fallback config path:", configFilePath);
+                console.error("❌ Server couldn't provide config file path");
+                showMessage("Could not determine config file location", "error");
             }
         } catch (error) {
-            console.error("Failed to get config file path:", error);
-            // Fallback to default path
-            configFilePath =
-                "/Users/arkabhattacharya/Library/Application Support/Claude/file_system_config.json";
+            console.error("❌ Failed to get config file path:", error);
         }
     }
 
@@ -358,7 +333,6 @@
         document.getElementById("serverStatus").classList.add("hidden");
         updateAddButton();
 
-        // If there are unsaved changes, show the save section
         if (hasUnsavedChanges) {
             document.getElementById("saveSection").classList.remove("hidden");
         }
@@ -366,7 +340,7 @@
 
     async function loadExistingPermissions() {
         try {
-            const response = await fetch("http://localhost:20252/api/read-file", {
+            const response = await fetch("/api/read-file", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -383,20 +357,27 @@
                     permissions.forEach((permission) => {
                         addPermissionToList(permission.path, permission.operation, false);
                     });
-                    updateClearAllButtonVisibility();
-                    hideServerError();
                 } else {
-                    // If file doesn't exist or is empty, initialize with empty array
-                    console.log("No existing permissions found, starting fresh");
-                    updateEmptyState();
-                    updateClearAllButtonVisibility();
-                    hideServerError();
+                    if (result.error) {
+                        if (result.error.includes('ENOENT') || result.error.includes('no such file')) {
+                            console.log("Config file doesn't exist yet, will be created on first save");
+                        } else {
+                            console.error("❌ Could not read config file:", result.error);
+                            showMessage("Could not load existing permissions (temporary error)", "warning");
+                            return;
+                        }
+                    } else {
+                        console.log("No existing permissions found, starting fresh");
+                    }
                 }
+                updateEmptyState();
+                updateClearAllButtonVisibility();
+                hideServerError();
             } else {
                 showServerError();
             }
         } catch (error) {
-            console.error("Error loading permissions:", error);
+            console.error("❌ Error loading permissions:", error);
             showServerError();
         }
     }
@@ -408,13 +389,11 @@
 
         const trimmedPath = value.trim();
 
-        // Check if path exists in active permissions
         if (existingPaths.includes(trimmedPath)) {
             showMessage("This path is already in your permissions list!", "warning");
             return;
         }
 
-        // Check if path is currently in the removed items (undo section)
         const isInRemovedItems = removedItems.some(item => item.fullPath === trimmedPath);
         if (isInRemovedItems) {
             showMessage("This path is currently being removed. Please undo the removal or save changes first.", "warning");
@@ -423,14 +402,10 @@
 
         selectedPath = trimmedPath;
 
-        // Enable permission options
         const permissionOptions = document.getElementById("permissionOptions");
         permissionOptions.classList.remove("opacity-50", "pointer-events-none");
 
-        // Set default permission
         setDefaultPermission();
-
-        // Update UI
         updateSelectedPath();
     }
 
@@ -470,11 +445,7 @@
 
         for (let i = 0; i < parts.length; i++) {
             const part = parts[i];
-            if (
-                part.includes("-") ||
-                part.includes("_") ||
-                (part.match(/[A-Z]/) && part.match(/[a-z]/))
-            ) {
+            if (part.includes("-") || part.includes("_") || (part.match(/[A-Z]/) && part.match(/[a-z]/))) {
                 projectStartIndex = i;
                 break;
             }
@@ -534,9 +505,7 @@
                                 <p class="font-medium text-gray-800 text-sm sm:text-base break-all path-display" title="${fullPath}">${fullPath}</p>
                                 ${isPending ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 pending-indicator">Pending</span>' : ""}
                             </div>
-                            <p class="${
-            isReadOnly ? "text-blue-600" : "text-purple-600"
-        } text-xs sm:text-sm mt-1">
+                            <p class="${isReadOnly ? "text-blue-600" : "text-purple-600"} text-xs sm:text-sm mt-1">
                                 ${isReadOnly ? "👀 Read only" : "✨ Read & Write"}
                             </p>
                         </div>
@@ -568,10 +537,6 @@
         permissionOptions.classList.add("opacity-50", "pointer-events-none");
 
         updateAddButton();
-
-        document.querySelectorAll(".permission-card").forEach((card) => {
-            card.classList.remove("selected");
-        });
     }
 
     function removePermission(button) {
@@ -581,15 +546,12 @@
         const isPending = item.querySelector(".pending-indicator") !== null;
 
         if (isPending) {
-            // This is a newly added item that hasn't been saved yet
-            // Just remove it completely without adding to removedItems
             item.remove();
             existingPaths = existingPaths.filter((path) => path !== fullPath);
             updateEmptyState();
             updateClearAllButtonVisibility();
             checkUnsavedChangesState();
         } else {
-            // This is a saved item, add to removedItems for undo capability
             removedItems.push({
                 element: item.cloneNode(true),
                 pathText: displayPath,
@@ -692,17 +654,14 @@
     function checkUnsavedChangesState() {
         if (!isServerConnected) return;
 
-        // Check if there are any pending changes (removals or additions)
         const hasPendingItems = document.querySelectorAll('.pending-indicator').length > 0;
         const hasRemovedItems = removedItems.length > 0;
 
         if (!hasPendingItems && !hasRemovedItems) {
-            // No pending changes, hide unsaved changes indicator
             hasUnsavedChanges = false;
             document.getElementById("pendingChanges").classList.add("hidden");
             document.getElementById("saveSection").classList.add("hidden");
         } else {
-            // Still have pending changes, show unsaved changes indicator
             showUnsavedChanges();
         }
     }
@@ -711,9 +670,7 @@
         if (!isServerConnected) return;
 
         const permissions = [];
-        const activeItems = document.querySelectorAll(
-            '.permission-item:not([style*="display: none"])'
-        );
+        const activeItems = document.querySelectorAll('.permission-item:not([style*="display: none"])');
 
         activeItems.forEach((item) => {
             const fullPath = item.getAttribute("data-full-path");
@@ -727,7 +684,7 @@
         });
 
         try {
-            const response = await fetch("http://localhost:20252/api/modify-file", {
+            const response = await fetch("/api/modify-file", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -743,9 +700,7 @@
             if (result.success) {
                 document
                     .querySelectorAll('.permission-item[style*="display: none"]')
-                    .forEach((item) => {
-                        item.remove();
-                    });
+                    .forEach((item) => item.remove());
 
                 document.querySelectorAll(".pending-indicator").forEach((indicator) => {
                     indicator.remove();
@@ -776,10 +731,8 @@
         const emptyState = document.getElementById("emptyState");
         const undoSection = document.getElementById("undoSection");
 
-        // Count actual permission items that exist in the DOM (not hidden by removal)
         const activeItems = permissionsList.querySelectorAll('.permission-item:not([style*="display: none"])');
 
-        // Show empty state only if there are no active items AND no pending removals
         const hasPendingRemovals = !undoSection.classList.contains("hidden") && removedItems.length > 0;
 
         if (activeItems.length === 0 && !hasPendingRemovals) {
@@ -794,7 +747,6 @@
 
         if (activeItems.length === 0) return;
 
-        // Remove all active permissions
         activeItems.forEach(item => {
             const fullPath = item.getAttribute("data-full-path");
             const displayPath = item.querySelector(".path-display").textContent;
@@ -819,7 +771,6 @@
             }, 500);
         });
 
-        // Update UI
         updateRemovedPathsDisplay();
         updateEmptyState();
         updateClearAllButtonVisibility();
@@ -854,7 +805,7 @@
             if (document.body.contains(message)) {
                 document.body.removeChild(message);
             }
-        }, 3000);
+        }, 5000);
     }
 </script>
 </body>
