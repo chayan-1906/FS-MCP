@@ -6,6 +6,7 @@ import { registerTool as listDirectory } from '../tools/directory/list-directory
 import { registerTool as createDirectory } from '../tools/directory/create-directory';
 import { registerTool as deleteDirectory } from '../tools/directory/delete-directory';
 import { registerTool as getAllowedDirectories } from '../tools/directory/get-allowed-directories';
+import { registerTool as directoryTree } from '../tools/directory/directory-tree';
 
 import { registerTool as readFile } from '../tools/file/read-file';
 import { registerTool as createFile } from '../tools/file/create-file';
@@ -32,6 +33,7 @@ async function setupMcpTools(server: McpServer) {
     createDirectory(server);
     deleteDirectory(server);
     getAllowedDirectories(server);
+    directoryTree(server);
 
     // file
     readFile(server);

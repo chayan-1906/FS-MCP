@@ -4,6 +4,7 @@ const tools = {
     createDirectory: "create-directory",
     deleteDirectory: "delete-directory",
     getAllowedDirectories: "get-allowed-directories",
+    directoryTree: "directory-tree",
 
     // file
     readFile: "read-file",
