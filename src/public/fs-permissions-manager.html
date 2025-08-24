@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>FS-MCP Permissions Manager</title>
-    <link rel="icon" type="image/png" href="/file-system.png"/>
+    <link rel="icon" type="image/png" href="/favicon"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"/>
@@ -325,15 +325,6 @@
         }
     }
 
-    function checkFileSystemAccessSupport() {
-        if (window.showDirectoryPicker && window.showOpenFilePicker) {
-            console.log("File System Access API supported");
-        } else {
-            console.log("File System Access API not supported, using fallback");
-            showMessage("File System Access API not available. You may need to manually enter paths.", "warning");
-        }
-    }
-
     async function getConfigFilePath() {
         try {
             const response = await fetch("http://localhost:20252/api/config-file-path");
@@ -450,7 +441,7 @@
 
     function updateSelectedPath() {
         const pathElement = document.getElementById("selectedPath");
-        if (selectedPath) {
+        if (selectedPath && pathElement) {
             const displayPath = getDisplayPath(selectedPath);
             pathElement.textContent = displayPath;
             pathElement.classList.remove("text-gray-600");
@@ -737,7 +728,7 @@
 
         try {
             const response = await fetch("http://localhost:20252/api/modify-file", {
-                method: "POST",
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },

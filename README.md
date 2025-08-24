@@ -5,7 +5,7 @@ Context Protocol) server.
 
 ---
 
-![logo](https://raw.githubusercontent.com/chayan-1906/FS-MCP/master/file-system.png)
+![logo](https://raw.githubusercontent.com/chayan-1906/FS-MCP/master/src/public/file-system.png)
 
 ## Features
 
@@ -33,17 +33,11 @@ npm start
 Open your browser and navigate to one of these URLs:
 
 ```
-http://localhost:20252/
-http://localhost:20252/permissions
-http://localhost:20252/fs-permissions-manager.html
+http://localhost:20252
 ```
-
-**❌ DO NOT** open the HTML file directly from your file system (like `file:///path/to/fs-permissions-manager.html`) as
-this will cause API calls to fail.
 
 ### 3. Manage permissions
 
-- Click "🔄 Refresh" to load current permissions
 - Click "➕ Add Permission" to add a new path
 - Click "✏️ Edit" on any permission to modify it
 - Click "🗑️ Delete" to remove a permission

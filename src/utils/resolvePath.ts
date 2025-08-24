@@ -1,7 +1,7 @@
 import path from "path";
+import { constants } from "./constants";
 import { getAllowedRoots } from "./getAllowedRoots";
 import { getClaudeConfigDir } from "mcp-utils/utils";
-import { constants } from "./constants";
 
 const findDirectoryByName = async (searchName: string): Promise<string | null> => {
     const ALLOWED_ROOTS = await getAllowedRoots();
