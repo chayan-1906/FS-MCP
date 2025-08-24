@@ -417,8 +417,7 @@
     function updateSelectedPath() {
         const pathElement = document.getElementById("selectedPath");
         if (selectedPath && pathElement) {
-            const displayPath = getDisplayPath(selectedPath);
-            pathElement.textContent = displayPath;
+            pathElement.textContent = getDisplayPath(selectedPath);
             pathElement.classList.remove("text-gray-600");
             pathElement.classList.add("text-gray-800");
             pathElement.setAttribute("title", selectedPath);

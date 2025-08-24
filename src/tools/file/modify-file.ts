@@ -43,7 +43,7 @@ export const modifyFile = async (filePath: string, operation: "insert" | "replac
 export const registerTool = (server: McpServer) => {
     server.tool(
         tools.modifyFile,
-        `Modifies specific lines in a file without rewriting it. Always get exact line numbers first with ${tools.getFileLines}`,
+        `Modifies specific lines in a file without rewriting it. Always get exact line numbers first with ${tools.readFile}`,
         {
             filePath: z.string().describe("Absolute or base-relative path to the file to modify"),
             operation: z.enum(["insert", "replace", "delete"]).describe("Type of modification: insert (add new line), replace (change existing line), delete (remove line)"),
