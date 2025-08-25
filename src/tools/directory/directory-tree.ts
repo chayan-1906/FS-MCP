@@ -154,7 +154,7 @@ const directoryTree = async (dirPath: string = ".", maxDepth: number = 3, includ
         default:
             throw new Error(`Invalid format: ${format}`);
     }
-};
+}
 
 export const registerTool = (server: McpServer) => {
     server.tool(

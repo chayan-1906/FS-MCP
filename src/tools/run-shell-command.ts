@@ -27,7 +27,7 @@ const runShellCommand = async (command: string, cwd: string) => {
 export const registerTool = (server: McpServer) => {
     server.tool(
         tools.runShellCommand,
-        'Executes a shell command on the server. Use carefully—this does not touch the GitHub API, but runs commands in the local environment',
+        'Executes a shell command on the server. Use carefully, this does not touch the GitHub API, but runs commands in the local environment',
         {
             command: z.string().describe('The exact shell command to run'),
             cwd: z.string().describe('Working directory path'),
