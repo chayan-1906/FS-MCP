@@ -159,7 +159,10 @@ open the HTML file directly.
 ]
 ```
 
-For detailed permissions manager documentation, see [PERMISSIONS_MANAGER_README.md](PERMISSIONS_MANAGER_README.md).
+## 📖 User Guide
+
+Detailed
+documentation: [FileSystem MCP User Guide](https://www.notion.so/FileSystem-MCP-User-Guide-25a0c027172280b5bccfcf1dadd9120b)
 
 ---
 

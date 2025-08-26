@@ -1,12 +1,16 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { sendError } from "mcp-utils/utils";
 import { transport } from "../../server";
+import { PORT } from "../../config/config";
 import { tools } from "../../utils/constants";
 import { getAllowedRoots } from "../../utils/getAllowedRoots";
 
 const getAllowedDirectories = async () => {
     const allowedRoots = await getAllowedRoots();
-    return allowedRoots;
+    return {
+        allowed_directories: allowedRoots,
+        permissions_manager: `Configure at: http://localhost:${PORT}`,
+    };
 }
 
 export const registerTool = (server: McpServer) => {

@@ -2,6 +2,7 @@ import path from "path";
 import { constants } from "./constants";
 import { getAllowedRoots } from "./getAllowedRoots";
 import { getClaudeConfigDir } from "mcp-utils/utils";
+import { PORT } from "../config/config";
 
 const findDirectoryByName = async (searchName: string): Promise<string | null> => {
     const ALLOWED_ROOTS = await getAllowedRoots();
@@ -32,14 +33,14 @@ const resolvePath = async (relativePath: string, operation: 'read' | 'write'): P
         });
 
         if (matchingRoots.length === 0) {
-            throw new Error(`Access denied: ${path} is outside allowed directories ❌`);
+            throw new Error(`Access denied: ${relativePath} is outside allowed directories ❌\n\n🔧 Configure permissions at: http://localhost:${PORT}`);
         }
 
         // Sort by path length (descending) to get most specific match first
         const mostSpecificRoot = matchingRoots.sort((a: any, b: any) => b.path.length - a.path.length)[0];
 
         if (mostSpecificRoot.operation !== operation && mostSpecificRoot.operation !== 'write') {
-            throw new Error(`Access denied: Insufficient permissions for ${operation} operation on this path ❌`);
+            throw new Error(`Access denied: Insufficient permissions for ${operation} operation on this path ❌\n\n🔧 Configure permissions at: http://localhost:${PORT}`);
         }
 
         return resolved;
@@ -59,7 +60,7 @@ const resolvePath = async (relativePath: string, operation: 'read' | 'write'): P
         return await resolvePath(path.resolve(relativePath), operation);
     }
 
-    throw new Error(`Access denied: ${relativePath} is outside allowed directories ❌`);
+    throw new Error(`Access denied: ${relativePath} is outside allowed directories ❌\n\n🔧 Configure permissions at: http://localhost:${PORT}`);
 }
 
 export default resolvePath;

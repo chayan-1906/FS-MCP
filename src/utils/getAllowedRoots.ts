@@ -17,32 +17,7 @@ export const getAllowedRoots = async () => {
         if (error.code === 'ENOENT') {
             await printInConsole(transport, `Config file not found, creating with default permissions`);
 
-            const defaultPath = getClaudeConfigDir();
-
-            /*const platform = os.platform();
-            const homedir = os.homedir();
-
-            switch (platform) {
-                case "darwin":
-                    defaultPath = path.join(homedir, "Library/Application Support/Claude");
-                    break;
-                case "win32":
-                    defaultPath = path.join(homedir, "AppData/Roaming/Claude");
-                    break;
-                case "linux":
-                    defaultPath = path.join(homedir, ".config/claude");
-                    break;
-                default:
-                    defaultPath = path.join(homedir, ".claude");
-            }*/
-
             const defaultRoots: object[] = [];
-            /*const defaultRoots = [
-                {
-                    path: defaultPath,
-                    operation: "write",
-                },
-            ];*/
 
             try {
                 const dir = path.dirname(filePath);

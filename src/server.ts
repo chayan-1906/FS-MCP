@@ -28,7 +28,7 @@ app.use("/api", SystemRoutes);
 
 freezePortOnQuit();
 
-const serverName = "fs";
+const serverName = "file-system";
 
 async function startMcp() {
     await setupMcpTools(server);
