@@ -382,25 +382,39 @@
         }
     }
 
+    function normalizePath(path) {
+        if (!path) return path;
+
+        let normalized = path.trim();
+
+        if (normalized.length > 1 && (normalized.endsWith('/') || normalized.endsWith('\\'))) {
+            if (!(normalized.match(/^[A-Za-z]:\\$/) || normalized === '/')) {
+                normalized = normalized.replace(/[/\\]+$/, '');
+            }
+        }
+
+        return normalized;
+    }
+
     function handlePathInput(value) {
         if (!value || value.trim() === "") {
             return;
         }
 
-        const trimmedPath = value.trim();
+        const normalizedPath = normalizePath(value);
 
-        if (existingPaths.includes(trimmedPath)) {
+        if (existingPaths.includes(normalizedPath)) {
             showMessage("This path is already in your permissions list!", "warning");
             return;
         }
 
-        const isInRemovedItems = removedItems.some(item => item.fullPath === trimmedPath);
+        const isInRemovedItems = removedItems.some(item => item.fullPath === normalizedPath);
         if (isInRemovedItems) {
             showMessage("This path is currently being removed. Please undo the removal or save changes first.", "warning");
             return;
         }
 
-        selectedPath = trimmedPath;
+        selectedPath = normalizedPath;
 
         const permissionOptions = document.getElementById("permissionOptions");
         permissionOptions.classList.remove("opacity-50", "pointer-events-none");
@@ -517,7 +531,7 @@
                 `;
 
         permissionsList.appendChild(item);
-        existingPaths.push(fullPath);
+        existingPaths.push(normalizePath(fullPath));
         updateEmptyState();
         updateClearAllButtonVisibility();
     }
@@ -546,7 +560,7 @@
 
         if (isPending) {
             item.remove();
-            existingPaths = existingPaths.filter((path) => path !== fullPath);
+            existingPaths = existingPaths.filter((path) => path !== normalizePath(fullPath));
             updateEmptyState();
             updateClearAllButtonVisibility();
             checkUnsavedChangesState();
@@ -554,7 +568,7 @@
             removedItems.push({
                 element: item.cloneNode(true),
                 pathText: displayPath,
-                fullPath: fullPath,
+                fullPath: normalizePath(fullPath),
             });
 
             item.classList.add("removed-item");
@@ -568,7 +582,7 @@
                 updateClearAllButtonVisibility();
             }, 500);
 
-            existingPaths = existingPaths.filter((path) => path !== fullPath);
+            existingPaths = existingPaths.filter((path) => path !== normalizePath(fullPath));
 
             showUnsavedChanges();
         }
@@ -754,7 +768,7 @@
             removedItems.push({
                 element: item.cloneNode(true),
                 pathText: displayPath,
-                fullPath: fullPath,
+                fullPath: normalizePath(fullPath),
             });
 
             // Mark as removed
@@ -762,7 +776,7 @@
             item.classList.add("undo-animation");
 
             // Remove from existing paths
-            existingPaths = existingPaths.filter(path => path !== fullPath);
+            existingPaths = existingPaths.filter(path => path !== normalizePath(fullPath));
 
             // Hide after animation
             setTimeout(() => {
