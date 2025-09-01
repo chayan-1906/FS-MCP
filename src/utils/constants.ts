@@ -1,9 +1,9 @@
 const tools = {
     // directory
-    listDirectory: "list-directory",
+    getDirectoryContent: "get-directory-content",
     createDirectory: "create-directory",
     deleteDirectory: "delete-directory",
-    getAllowedDirectories: "get-allowed-directories",
+    listAllowedDirectories: "list-allowed-directories",
     directoryTree: "directory-tree",
 
     // file

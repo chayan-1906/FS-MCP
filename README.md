@@ -134,6 +134,7 @@ open the HTML file directly.
 ### Configuration File Location:
 
 **macOS/Linux:**
+
 ```
 ~/Library/Application Support/Claude/file_system_config.json
 ```
@@ -148,14 +149,14 @@ open the HTML file directly.
 
 ```json
 [
-    {
-      "path": "/path/to/file/or/folder",
-        "operation": "read"
-    },
-    {
-        "path": "/another/path",
-        "operation": "write"
-    }
+  {
+    "path": "/path/to/file/or/folder",
+    "operation": "read"
+  },
+  {
+    "path": "/another/path",
+    "operation": "write"
+  }
 ]
 ```
 
@@ -170,10 +171,10 @@ documentation: [FileSystem MCP User Guide](https://www.notion.so/FileSystem-MCP-
 
 | Tool Name                    | Category  | Description                                                                                             |
 |------------------------------|-----------|---------------------------------------------------------------------------------------------------------|
-| `list-directory`             | Directory | Lists files and folders within the specified directory                                                  |
+| `get-directory-content`      | Directory | Lists files and folders within the specified directory                                                  |
 | `create-directory`           | Directory | Creates a new directory at the specified path                                                           |
 | `delete-directory`           | Directory | Deletes a directory                                                                                     |
-| `get-allowed-directories`    | Directory | Returns the list of allowed directories and their permissions from the configuration                    |
+| `list-allowed-directories`   | Directory | Returns the list of allowed directories and their permissions from the configuration                    |
 | `directory-tree`             | Directory | Generates a hierarchical tree view of directory structure with customizable depth and filtering options |
 |                              |           |                                                                                                         |
 | `read-file`                  | File      | Reads file content with line numbers. Supports reading specific line ranges                             |

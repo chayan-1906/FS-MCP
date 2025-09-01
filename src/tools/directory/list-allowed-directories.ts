@@ -5,7 +5,7 @@ import { PORT } from "../../config/config";
 import { tools } from "../../utils/constants";
 import { getAllowedRoots } from "../../utils/getAllowedRoots";
 
-const getAllowedDirectories = async () => {
+const listAllowedDirectories = async () => {
     const allowedRoots = await getAllowedRoots();
     return {
         allowed_directories: allowedRoots,
@@ -15,12 +15,12 @@ const getAllowedDirectories = async () => {
 
 export const registerTool = (server: McpServer) => {
     server.tool(
-        tools.getAllowedDirectories,
+        tools.listAllowedDirectories,
         "Returns the list of allowed directories and their permissions from the configuration",
         {},
         async () => {
             try {
-                const result = await getAllowedDirectories();
+                const result = await listAllowedDirectories();
 
                 return {
                     content: [
@@ -31,12 +31,12 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to get allowed directories: ${error.message}`), tools.getAllowedDirectories);
+                sendError(transport, new Error(`Failed to list allowed directories: ${error.message}`), tools.listAllowedDirectories);
                 return {
                     content: [
                         {
                             type: "text" as const,
-                            text: `Failed to get allowed directories ❌: ${error.message}`,
+                            text: `Failed to list allowed directories ❌: ${error.message}`,
                         },
                     ],
                 };

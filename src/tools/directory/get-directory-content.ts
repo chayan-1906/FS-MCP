@@ -7,7 +7,7 @@ import { transport } from "../../server";
 import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
 
-const listDirectory = async (dirPath: string = ".") => {
+const listDirectories = async (dirPath: string = ".") => {
     const fullPath = await resolvePath(dirPath, 'read');
     const items = await fs.readdir(fullPath, {withFileTypes: true});
 
@@ -31,14 +31,14 @@ const listDirectory = async (dirPath: string = ".") => {
 
 export const registerTool = (server: McpServer) => {
     server.tool(
-        tools.listDirectory,
-        "List all files and folders within the specified directory",
+        tools.getDirectoryContent,
+        "Returns a list all files and folders within the specified directory",
         {
             dirPath: z.string().optional().describe("Absolute or base-relative directory path to list. Defaults to the base/root directory if omitted"),
         },
         async ({dirPath}) => {
             try {
-                const result = await listDirectory(dirPath);
+                const result = await listDirectories(dirPath);
 
                 return {
                     content: [
@@ -49,12 +49,12 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to list directory: ${error.message}`), tools.listDirectory);
+                sendError(transport, new Error(`Failed to get directory content: ${error.message}`), tools.getDirectoryContent);
                 return {
                     content: [
                         {
                             type: "text" as const,
-                            text: `Failed to list directory ❌: ${error.message}`,
+                            text: `Failed to get directory content ❌: ${error.message}`,
                         },
                     ],
                 };
