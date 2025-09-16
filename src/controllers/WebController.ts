@@ -3,6 +3,15 @@ import fs from "fs/promises";
 import { Request, Response } from "express";
 import { PORT } from "../config/config";
 import { embeddedHtmlErrorPage, htmlFileErrorPage } from "../utils/errorPages";
+import { tools } from "../utils/constants";
+import { getToolsByCategory } from "mcp-utils/utils";
+import { generateHomepageHTML } from "../templates/homepageHTML";
+
+const serveHomePageController = async (req: Request, res: Response) => {
+    const toolsByCategory = getToolsByCategory(tools);
+    const homepageHtml = generateHomepageHTML(toolsByCategory, PORT);
+    res.send(homepageHtml);
+}
 
 const serveInputController = async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/html');
@@ -37,4 +46,4 @@ const serveFavIconController = async (req: Request, res: Response) => {
     }
 }
 
-export { serveInputController, serveFavIconController };
+export { serveHomePageController, serveInputController, serveFavIconController };
