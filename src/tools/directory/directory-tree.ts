@@ -6,22 +6,7 @@ import { sendError } from "mcp-utils/utils";
 import { transport } from "../../server";
 import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-
-interface TreeNode {
-    name: string;
-    type: "file" | "directory";
-    path: string;
-    size?: number;
-    extension?: string;
-    children?: TreeNode[];
-}
-
-interface TreeResult {
-    path: string;
-    totalFiles: number;
-    totalDirectories: number;
-    tree: TreeNode[];
-}
+import { TreeNode, TreeResult } from "../../types";
 
 const defaultExcludePatterns = [".git", "node_modules", ".next", "dist", "build", ".vscode", ".idea", "coverage", ".nyc_output"];
 
@@ -157,15 +142,16 @@ const directoryTree = async (dirPath: string = ".", maxDepth: number = 3, includ
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.directoryTree;
     server.tool(
-        tools.directoryTree,
-        "Generates a hierarchical tree view of directory structure with customizable depth and filtering options",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            dirPath: z.string().optional().describe("Absolute or base-relative path to the directory. Defaults to current directory"),
-            maxDepth: z.number().optional().describe("Maximum depth to traverse (default: 3). Use 1 for current level only"),
-            includeFiles: z.boolean().optional().describe("Include files in the tree output (default: true). Set false for directories only"),
-            excludePatterns: z.array(z.string()).optional().describe("Array of patterns to exclude (default: ['.git', 'node_modules', '.next', 'dist', 'build']). Supports wildcards with *"),
-            format: z.enum(["visual", "json", "both"]).default('visual').describe("Output format: 'visual' for tree diagram, 'json' for structured data, 'both' for combined output (default: 'visual')"),
+            dirPath: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'dirPath')?.techDescription || ''),
+            maxDepth: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'maxDepth')?.techDescription || ''),
+            includeFiles: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'includeFiles')?.techDescription || ''),
+            excludePatterns: z.array(z.string()).optional().describe(toolConfig.parameters.find(p => p.name === 'excludePatterns')?.techDescription || ''),
+            format: z.enum(["visual", "json", "both"]).default('visual').describe(toolConfig.parameters.find(p => p.name === 'format')?.techDescription || ''),
         },
         async ({dirPath, maxDepth = 3, includeFiles = true, excludePatterns = defaultExcludePatterns, format}) => {
             try {
@@ -180,7 +166,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to generate directory tree: ${error.message}`), tools.directoryTree);
+                sendError(transport, new Error(`Failed to generate directory tree: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

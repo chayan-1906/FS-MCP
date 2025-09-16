@@ -28,14 +28,15 @@ export const getFileLines = async (filePath: string, startLine?: number, endLine
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.readFile;
     server.tool(
-        tools.readFile,
-        "Reads file content with line numbers. Supports reading specific line ranges.",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the file"),
-            startLine: z.number().optional().describe("Starting line number (1-based, optional)"),
-            endLine: z.number().optional().describe("Ending line number (1-based, optional)"),
-            encoding: z.enum(["utf8", "ascii", "base64", "hex"]).optional().describe("Encoding to use (default: utf8)")
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
+            startLine: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'startLine')?.techDescription || ''),
+            endLine: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'endLine')?.techDescription || ''),
+            encoding: z.enum(["utf8", "ascii", "base64", "hex"]).optional().describe(toolConfig.parameters.find(p => p.name === 'encoding')?.techDescription || '')
         },
         async ({filePath, startLine, endLine, encoding}) => {
             try {
@@ -50,7 +51,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to read file: ${error.message}`), tools.readFile);
+                sendError(transport, new Error(`Failed to read file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

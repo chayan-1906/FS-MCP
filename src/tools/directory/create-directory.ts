@@ -13,12 +13,13 @@ const createDirectory = async (dirPath: string, recursive: boolean = true) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.createDirectory;
     server.tool(
-        tools.createDirectory,
-        "Creates a new directory at the specified path",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            dirPath: z.string().describe("Absolute or base-relative path of the directory to create"),
-            recursive: z.boolean().optional().describe("Whether to create parent directories if they do not exist. Defaults to true"),
+            dirPath: z.string().describe(toolConfig.parameters.find(p => p.name === 'dirPath')?.techDescription || ''),
+            recursive: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'recursive')?.techDescription || ''),
         },
         async ({dirPath, recursive}) => {
             try {
@@ -33,7 +34,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to create directory: ${error.message}`), tools.createDirectory);
+                sendError(transport, new Error(`Failed to create directory: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

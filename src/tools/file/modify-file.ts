@@ -41,16 +41,17 @@ export const modifyFile = async (filePath: string, operation: "insert" | "replac
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.modifyFile;
     server.tool(
-        tools.modifyFile,
-        `Modifies specific lines in a file without rewriting it. Always get exact line numbers first with ${tools.readFile}`,
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the file to modify"),
-            operation: z.enum(["insert", "replace", "delete"]).describe("Type of modification: insert (add new line), replace (change existing line), delete (remove line)"),
-            lineNumber: z.number().describe("Line number to modify (1-based)"),
-            content: z.string().optional().describe("Content for insert/replace operations"),
-            lineCount: z.number().optional().describe("Number of lines for replace/delete operations (default: 1)"),
-            encoding: z.enum(["utf8", "ascii", "base64", "hex"]).optional().describe("Encoding to use (default: utf8)")
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
+            operation: z.enum(["insert", "replace", "delete"]).describe(toolConfig.parameters.find(p => p.name === 'operation')?.techDescription || ''),
+            lineNumber: z.number().describe(toolConfig.parameters.find(p => p.name === 'lineNumber')?.techDescription || ''),
+            content: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'content')?.techDescription || ''),
+            lineCount: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'lineCount')?.techDescription || ''),
+            encoding: z.enum(["utf8", "ascii", "base64", "hex"]).optional().describe(toolConfig.parameters.find(p => p.name === 'encoding')?.techDescription || '')
         },
         async ({filePath, operation, lineNumber, content, lineCount, encoding}) => {
             try {
@@ -65,7 +66,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to modify file: ${error.message}`), tools.modifyFile);
+                sendError(transport, new Error(`Failed to modify file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

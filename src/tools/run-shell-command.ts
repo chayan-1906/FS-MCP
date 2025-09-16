@@ -25,12 +25,13 @@ const runShellCommand = async (command: string, cwd: string) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.runShellCommand;
     server.tool(
-        tools.runShellCommand,
-        'Executes a shell command on the server. Use carefully, this does not touch the GitHub API, but runs commands in the local environment',
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            command: z.string().describe('The exact shell command to run'),
-            cwd: z.string().describe('Working directory path'),
+            command: z.string().describe(toolConfig.parameters.find(p => p.name === 'command')?.techDescription || ''),
+            cwd: z.string().describe(toolConfig.parameters.find(p => p.name === 'cwd')?.techDescription || ''),
         },
         async ({command, cwd}) => {
             try {
@@ -43,7 +44,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to run shell command: ${error}`), tools.runShellCommand);
+                sendError(transport, new Error(`Failed to run shell command: ${error}`), toolConfig.name);
                 return {
                     content: [
                         {

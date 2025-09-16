@@ -5,48 +5,9 @@ import ExcelJS from "exceljs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { sendError } from "mcp-utils/utils";
 import { transport } from "../../server";
+import { ExcelData } from "../../types";
 import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-
-interface CellStyle {
-    font?: {
-        name?: string;
-        size?: number;
-        bold?: boolean;
-        italic?: boolean;
-        underline?: boolean;
-        strike?: boolean;
-        color?: string;
-    };
-    fill?: {
-        type?: "solid" | "gradient";
-        fgColor?: string;
-        bgColor?: string;
-    };
-    border?: {
-        top?: { style?: string; color?: string };
-        bottom?: { style?: string; color?: string };
-        left?: { style?: string; color?: string };
-        right?: { style?: string; color?: string };
-    };
-    alignment?: {
-        horizontal?: "left" | "center" | "right" | "justify";
-        vertical?: "top" | "middle" | "bottom";
-        wrapText?: boolean;
-        textRotation?: number;
-    };
-    numberFormat?: string;
-}
-
-interface ExcelData {
-    [sheetName: string]: {
-        data: any[][];
-        styles?: { [cellAddress: string]: CellStyle };
-        colWidths?: number[];
-        rowHeights?: number[];
-        merges?: Array<{ start: string; end: string }>;
-    };
-}
 
 export const createExcel = async (filePath: string, data: ExcelData) => {
     const fullPath = await resolvePath(filePath, 'write');
@@ -155,68 +116,69 @@ export const createExcel = async (filePath: string, data: ExcelData) => {
     await workbook.xlsx.writeFile(finalPath);
 
     return `Excel file created successfully: ${path.basename(finalPath)} ✅`;
-};
+}
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.createExcel;
     server.tool(
-        tools.createExcel,
-        "Creates an Excel sheet (.xlsx) with specified data and advanced styling",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the Excel file (will add .xlsx if missing)"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
             data: z.record(z.object({
-                data: z.array(z.array(z.any())).describe("2D array of cell data"),
+                data: z.array(z.array(z.any())).describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'data')?.techDescription || ''),
                 styles: z.record(z.object({
                     font: z.object({
-                        name: z.string().optional().describe("Font family (e.g., 'Arial', 'Calibri')"),
-                        size: z.number().optional().describe("Font size in points"),
-                        bold: z.boolean().optional(),
-                        italic: z.boolean().optional(),
-                        underline: z.boolean().optional(),
-                        strike: z.boolean().optional(),
-                        color: z.string().optional().describe("Hex color code (e.g., '#FF0000')")
-                    }).optional(),
+                        name: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'name')?.techDescription || ''),
+                        size: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'size')?.techDescription || ''),
+                        bold: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'bold')?.techDescription || ''),
+                        italic: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'italic')?.techDescription || ''),
+                        underline: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'underline')?.techDescription || ''),
+                        strike: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'strike')?.techDescription || ''),
+                        color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.parameters?.find(ff => ff.name === 'color')?.techDescription || '')
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'font')?.techDescription || ''),
                     fill: z.object({
-                        type: z.enum(["solid", "gradient"]).optional(),
-                        fgColor: z.string().optional().describe("Foreground color (hex)"),
-                        bgColor: z.string().optional().describe("Background color (hex)")
-                    }).optional(),
+                        type: z.enum(["solid", "gradient"]).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'fill')?.parameters?.find(ff => ff.name === 'type')?.techDescription || ''),
+                        fgColor: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'fill')?.parameters?.find(ff => ff.name === 'fgColor')?.techDescription || ''),
+                        bgColor: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'fill')?.parameters?.find(ff => ff.name === 'bgColor')?.techDescription || '')
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'fill')?.techDescription || ''),
                     border: z.object({
                         top: z.object({
-                            style: z.string().optional().describe("Border style (thin, medium, thick, etc.)"),
-                            color: z.string().optional().describe("Border color (hex)")
-                        }).optional(),
+                            style: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'top')?.parameters?.find(tf => tf.name === 'style')?.techDescription || ''),
+                            color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'top')?.parameters?.find(tf => tf.name === 'color')?.techDescription || '')
+                        }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'top')?.techDescription || ''),
                         bottom: z.object({
-                            style: z.string().optional(),
-                            color: z.string().optional()
-                        }).optional(),
+                            style: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'bottom')?.parameters?.find(tf => tf.name === 'style')?.techDescription || ''),
+                            color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'bottom')?.parameters?.find(tf => tf.name === 'color')?.techDescription || '')
+                        }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'bottom')?.techDescription || ''),
                         left: z.object({
-                            style: z.string().optional(),
-                            color: z.string().optional()
-                        }).optional(),
+                            style: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'left')?.parameters?.find(tf => tf.name === 'style')?.techDescription || ''),
+                            color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'left')?.parameters?.find(tf => tf.name === 'color')?.techDescription || '')
+                        }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'left')?.techDescription || ''),
                         right: z.object({
-                            style: z.string().optional(),
-                            color: z.string().optional()
-                        }).optional()
-                    }).optional(),
+                            style: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'right')?.parameters?.find(tf => tf.name === 'style')?.techDescription || ''),
+                            color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'right')?.parameters?.find(tf => tf.name === 'color')?.techDescription || '')
+                        }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.parameters?.find(bf => bf.name === 'right')?.techDescription || '')
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'border')?.techDescription || ''),
                     alignment: z.object({
-                        horizontal: z.enum(["left", "center", "right", "justify"]).optional(),
-                        vertical: z.enum(["top", "middle", "bottom"]).optional(),
-                        wrapText: z.boolean().optional(),
-                        textRotation: z.number().optional().describe("Text rotation in degrees")
-                    }).optional(),
-                    numberFormat: z.string().optional().describe("Number format (e.g., '0.00', '#,##0', 'mm/dd/yyyy')")
-                })).optional().describe("Cell styles by address (e.g., 'A1', 'B2')"),
-                colWidths: z.array(z.number()).optional().describe("Column widths in Excel units"),
-                rowHeights: z.array(z.number()).optional().describe("Row heights in points"),
+                        horizontal: z.enum(["left", "center", "right", "justify"]).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'alignment')?.parameters?.find(af => af.name === 'horizontal')?.techDescription || ''),
+                        vertical: z.enum(["top", "middle", "bottom"]).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'alignment')?.parameters?.find(af => af.name === 'vertical')?.techDescription || ''),
+                        wrapText: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'alignment')?.parameters?.find(af => af.name === 'wrapText')?.techDescription || ''),
+                        textRotation: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'alignment')?.parameters?.find(af => af.name === 'textRotation')?.techDescription || '')
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'alignment')?.techDescription || ''),
+                    numberFormat: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.parameters?.find(sf => sf.name === 'numberFormat')?.techDescription || ''),
+                })).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'styles')?.techDescription || ''),
+                colWidths: z.array(z.number()).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'colWidths')?.techDescription || ''),
+                rowHeights: z.array(z.number()).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'rowHeights')?.techDescription || ''),
                 merges: z.array(z.object({
-                    start: z.string().describe("Start cell (e.g., 'A1')"),
-                    end: z.string().describe("End cell (e.g., 'C3')")
-                })).optional().describe("Cell ranges to merge")
-            })).describe("Object where keys are sheet names and values are sheet configurations"),
+                    start: z.string().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'merges')?.parameters?.find(mf => mf.name === 'start')?.techDescription || ''),
+                    end: z.string().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'merges')?.parameters?.find(mf => mf.name === 'end')?.techDescription || ''),
+                })).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'merges')?.techDescription || ''),
+            })).describe(toolConfig.parameters.find(p => p.name === 'data')?.techDescription || ''),
             options: z.object({
-                headers: z.boolean().optional().describe("Whether first row contains headers (default: true)"),
-                sheetNames: z.array(z.string()).optional().describe("Optional custom sheet names")
-            }).optional()
+                headers: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'options')?.parameters?.find(of => of.name === 'headers')?.techDescription || ''),
+                sheetNames: z.array(z.string()).optional().describe(toolConfig.parameters.find(p => p.name === 'options')?.parameters?.find(of => of.name === 'sheetNames')?.techDescription || ''),
+            }).optional().describe(toolConfig.parameters.find(p => p.name === 'options')?.techDescription || ''),
         },
         async ({filePath, data, options = {}}) => {
             try {
@@ -231,7 +193,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to create Excel file: ${error.message}`), tools.createExcel);
+                sendError(transport, new Error(`Failed to create Excel file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {
@@ -243,4 +205,4 @@ export const registerTool = (server: McpServer) => {
             }
         }
     );
-};
+}

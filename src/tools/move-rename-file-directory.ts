@@ -20,12 +20,13 @@ const moveRenameFileDirectory = async (source: string, destination: string) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.moveRenameFileDirectory;
     server.tool(
-        tools.moveRenameFileDirectory,
-        "Moves or renames a file or directory from the source path to the destination path",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            source: z.string().describe("Absolute or base-relative path of the file or directory to move or rename"),
-            destination: z.string().describe("Absolute or base-relative target path"),
+            source: z.string().describe(toolConfig.parameters.find(p => p.name === 'source')?.techDescription || ''),
+            destination: z.string().describe(toolConfig.parameters.find(p => p.name === 'destination')?.techDescription || ''),
         },
         async ({source, destination}) => {
             try {
@@ -40,7 +41,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to move file: ${error.message}`), tools.moveRenameFileDirectory);
+                sendError(transport, new Error(`Failed to move file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

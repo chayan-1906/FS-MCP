@@ -19,12 +19,13 @@ const deleteDirectory = async (dirPath: string, recursive: boolean = false) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.deleteDirectory;
     server.tool(
-        tools.deleteDirectory,
-        "Deletes a directory",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            dirPath: z.string().describe("Absolute or base-relative path of the directory to delete"),
-            recursive: z.boolean().optional().describe("If true, deletes the directory and all its contents. Defaults to false"),
+            dirPath: z.string().describe(toolConfig.parameters.find(p => p.name === 'dirPath')?.techDescription || ''),
+            recursive: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'recursive')?.techDescription || ''),
         },
         async ({dirPath, recursive}) => {
             try {
@@ -39,7 +40,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to delete directory: ${error.message}`), tools.deleteDirectory);
+                sendError(transport, new Error(`Failed to delete directory: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

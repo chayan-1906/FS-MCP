@@ -27,11 +27,12 @@ export const createFile = async (filePath: string) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.createFile;
     server.tool(
-        tools.createFile,
-        "Creates a new empty file at the specified path",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the file to create")
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || '')
         },
         async ({filePath}) => {
             try {
@@ -46,7 +47,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to create file: ${error.message}`), tools.createFile);
+                sendError(transport, new Error(`Failed to create file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

@@ -34,14 +34,15 @@ export const readExcel = async (filePath: string) => {
     });
 
     return result;
-};
+}
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.readExcel;
     server.tool(
-        tools.readExcel,
-        "Reads Excel (.xlsx) files and returns data from all sheets",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Path to Excel file"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
         },
         async ({filePath}) => {
             try {
@@ -56,7 +57,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to read Excel file: ${error.message}`), tools.readExcel);
+                sendError(transport, new Error(`Failed to read Excel file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {
@@ -68,4 +69,4 @@ export const registerTool = (server: McpServer) => {
             }
         }
     );
-};
+}
