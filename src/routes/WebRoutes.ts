@@ -4,7 +4,7 @@ import { serveFavIconController, serveHomePageController, serveInputController }
 const router = Router();
 
 router.get('/', serveHomePageController);
-router.get('/input', serveInputController);
+router.get('/manage-permissions', serveInputController);
 router.get('/favicon', serveFavIconController);
 
 export default router;

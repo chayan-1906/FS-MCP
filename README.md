@@ -1,6 +1,6 @@
 # 🗂️ File System MCP Server
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/chayan-1906/fs-mcp)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/chayan-1906/fs-mcp)
 [![Node.js](https://img.shields.io/badge/node.js-16.x+-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.9.2-blue.svg)](https://www.typescriptlang.org/)
 [![Express](https://img.shields.io/badge/express-5.1.0-black.svg)](https://expressjs.com/)
@@ -13,7 +13,7 @@ executables available for macOS, Windows, and Linux for easy end-user installati
 
 ---
 
-![logo](https://raw.githubusercontent.com/chayan-1906/FS-MCP/master/src/public/file-system.png)
+<img src="https://raw.githubusercontent.com/chayan-1906/FS-MCP/master/src/public/file-system.png" alt="logo" width="150"/>
 
 ## ⚙️ Quick Start
 
@@ -26,7 +26,7 @@ Download from [https://claude.ai/download](https://claude.ai/download)
 #### 2. Download the Executable:
 
 **macOS:**
-📦 [Download macOS Executable](https://github.com/chayan-1906/FS-MCP/releases/download/v1.0.0/file-system)
+📦 [Download macOS Executable](https://github.com/chayan-1906/FS-MCP/releases/download/v1.1.0/file-system)
 
 **Windows:**
 📦 [Download Windows Executable](https://github.com/chayan-1906/FS-MCP/releases/download/v1.1.0/file-system.exe)

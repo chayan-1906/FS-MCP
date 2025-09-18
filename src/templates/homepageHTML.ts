@@ -155,6 +155,18 @@ const generateHomepageHTML = (toolsByCategory: Record<string, Tool[]>, port: num
                     backdrop-filter: blur(10px);
                 }
 
+                .permissions-link {
+                    color: white;
+                    text-decoration: none;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                }
+
+                .permissions-link:hover {
+                    color: #f0f8ff;
+                    text-shadow: 0 0 8px rgba(255,255,255,0.5);
+                }
+
                 .category-section {
                     background: white;
                     border-radius: 12px;
@@ -498,6 +510,10 @@ const generateHomepageHTML = (toolsByCategory: Record<string, Tool[]>, port: num
                 <header class="header">
                     <h1>🗂️ File System MCP Server</h1>
                     <p>Comprehensive file and directory management tools for your applications • ${totalTools} tools available</p>
+
+                    <div class="server-info">
+                        <a href="/manage-permissions" class="permissions-link">⚙️ Manage File Permissions</a>
+                    </div>
 
                     <div class="search-container">
                         <div class="search-box">

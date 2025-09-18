@@ -20,7 +20,7 @@ app.use(cors());
 
 const server = new McpServer({
     name: "FileSystem",
-    version: "1.0.0",
+    version: "1.1.0",
 });
 
 app.use("/", WebRoutes);
