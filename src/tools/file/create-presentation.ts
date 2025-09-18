@@ -6,34 +6,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { transport } from "../../server";
 import { sendError } from "mcp-utils/utils";
 import { tools } from "../../utils/constants";
+import { PresentationData } from "../../types";
 import resolvePath from "../../utils/resolvePath";
-
-interface SlideContent {
-    title?: string;
-    titleStyle?: {
-        fontSize?: number;
-        fontFace?: string;
-        color?: string;
-        bold?: boolean;
-        italic?: boolean;
-    };
-    content?: string[];
-    contentStyle?: {
-        fontSize?: number;
-        fontFace?: string;
-        color?: string;
-        bold?: boolean;
-        italic?: boolean;
-    };
-    backgroundColor?: string;
-    layout?: "title" | "content" | "section" | "comparison" | "blank";
-}
-
-interface PresentationData {
-    title: string;
-    author?: string;
-    slides: SlideContent[];
-}
 
 export const createPresentation = async (filePath: string, data: PresentationData, options: {
     slideSize?: "standard" | "widescreen";
@@ -100,38 +74,39 @@ export const createPresentation = async (filePath: string, data: PresentationDat
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.createPresentation;
     server.tool(
-        tools.createPresentation,
-        "Creates a PowerPoint presentation (.pptx) with specified slides and content",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the presentation file (will add .pptx if missing)"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
             data: z.object({
-                title: z.string().describe("Presentation title"),
-                author: z.string().optional().describe("Author name"),
+                title: z.string().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'title')?.techDescription || ''),
+                author: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'author')?.techDescription || ''),
                 slides: z.array(z.object({
-                    title: z.string().optional().describe("Slide title"),
+                    title: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'title')?.techDescription || ''),
                     titleStyle: z.object({
-                        fontSize: z.number().optional(),
-                        fontFace: z.string().optional(),
-                        color: z.string().optional(),
-                        bold: z.boolean().optional(),
-                        italic: z.boolean().optional()
-                    }).optional(),
-                    content: z.array(z.string()).optional().describe("Array of text content/bullet points"),
+                        fontSize: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'titleStyle')?.parameters?.find(tf => tf.name === 'fontSize')?.techDescription || ''),
+                        fontFace: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'titleStyle')?.parameters?.find(tf => tf.name === 'fontFace')?.techDescription || ''),
+                        color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'titleStyle')?.parameters?.find(tf => tf.name === 'color')?.techDescription || ''),
+                        bold: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'titleStyle')?.parameters?.find(tf => tf.name === 'bold')?.techDescription || ''),
+                        italic: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'titleStyle')?.parameters?.find(tf => tf.name === 'italic')?.techDescription || ''),
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'titleStyle')?.techDescription || ''),
+                    content: z.array(z.string()).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'content')?.techDescription || ''),
                     contentStyle: z.object({
-                        fontSize: z.number().optional(),
-                        fontFace: z.string().optional(),
-                        color: z.string().optional(),
-                        bold: z.boolean().optional(),
-                        italic: z.boolean().optional()
-                    }).optional(),
-                    backgroundColor: z.string().optional().describe("Hex color for slide background"),
-                    layout: z.enum(["title", "content", "section", "comparison", "blank"]).optional().describe("Slide layout type"),
-                })).describe("Array of slide data"),
-            }).describe("Presentation data with title and slides"),
+                        fontSize: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'contentStyle')?.parameters?.find(cf => cf.name === 'fontSize')?.techDescription || ''),
+                        fontFace: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'contentStyle')?.parameters?.find(cf => cf.name === 'fontFace')?.techDescription || ''),
+                        color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'contentStyle')?.parameters?.find(cf => cf.name === 'color')?.techDescription || ''),
+                        bold: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'contentStyle')?.parameters?.find(cf => cf.name === 'bold')?.techDescription || ''),
+                        italic: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'contentStyle')?.parameters?.find(cf => cf.name === 'italic')?.techDescription || '')
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'contentStyle')?.techDescription || ''),
+                    backgroundColor: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'backgroundColor')?.techDescription || ''),
+                    layout: z.enum(["title", "content", "section", "comparison", "blank"]).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.parameters?.find(sf => sf.name === 'layout')?.techDescription || ''),
+                })).describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'slides')?.techDescription || ''),
+            }).describe(toolConfig.parameters.find(p => p.name === 'data')?.techDescription || ''),
             options: z.object({
-                slideSize: z.enum(["standard", "widescreen"]).optional().describe("Slide dimensions"),
-            }).optional()
+                slideSize: z.enum(["standard", "widescreen"]).optional().describe(toolConfig.parameters.find(p => p.name === 'options')?.parameters?.find(of => of.name === 'slideSize')?.techDescription || ''),
+            }).optional().describe(toolConfig.parameters.find(p => p.name === 'options')?.techDescription || ''),
         },
         async ({filePath, data, options = {}}) => {
             try {
@@ -146,7 +121,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to create presentation: ${error.message}`), tools.createPresentation);
+                sendError(transport, new Error(`Failed to create presentation: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

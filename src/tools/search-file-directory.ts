@@ -52,13 +52,14 @@ const searchFileOrDirectory = async (searchName: string, searchType: 'file' | 'd
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.searchFileDirectory;
     server.tool(
-        tools.searchFileDirectory,
-        "Searches for files or directories by name within allowed directories",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            searchName: z.string().describe("Name or partial name to search for"),
-            searchType: z.enum(["file", "directory", "both"]).optional().describe("Type to search for, defaults to 'both' when users don't clarify whether it's a file or directory"),
-            maxDepth: z.number().optional().describe("Maximum search depth (default: 5)"),
+            searchName: z.string().describe(toolConfig.parameters.find(p => p.name === 'searchName')?.techDescription || ''),
+            searchType: z.enum(["file", "directory", "both"]).optional().describe(toolConfig.parameters.find(p => p.name === 'searchType')?.techDescription || ''),
+            maxDepth: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'maxDepth')?.techDescription || ''),
         },
         async ({searchName, searchType = "both", maxDepth = 5}) => {
             try {
@@ -75,7 +76,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Search failed: ${error.message}`), tools.searchFileDirectory);
+                sendError(transport, new Error(`Search failed: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

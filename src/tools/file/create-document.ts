@@ -5,32 +5,9 @@ import * as docx from "docx";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { sendError } from "mcp-utils/utils";
 import { transport } from "../../server";
+import { DocumentData } from "../../types";
 import { tools } from "../../utils/constants";
 import resolvePath from "../../utils/resolvePath";
-
-interface DocumentSection {
-    type: "heading" | "paragraph" | "list" | "table";
-    text?: string;
-    items?: string[];
-    rows?: string[][];
-    link?: { text: string; url: string };
-    style?: {
-        bold?: boolean;
-        italic?: boolean;
-        size?: number;
-        color?: string;
-        fontFamily?: string;
-        alignment?: "left" | "center" | "right" | "justify";
-    };
-}
-
-interface DocumentData {
-    title: string;
-    author?: string;
-    header?: string;
-    footer?: string;
-    sections: DocumentSection[];
-}
 
 export const createDocument = async (filePath: string, data: DocumentData, options: {} = {}) => {
     const fullPath = await resolvePath(filePath, 'write');
@@ -193,39 +170,40 @@ export const createDocument = async (filePath: string, data: DocumentData, optio
     await fs.writeFile(finalPath, buffer);
 
     return `Document created successfully: ${path.basename(finalPath)} (${data.sections.length} sections) ✅`;
-};
+}
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.createDocument;
     server.tool(
-        tools.createDocument,
-        "Creates a Word document (.docx) with specified content and formatting",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the document file (will add .docx if missing)"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
             data: z.object({
-                title: z.string().describe("Document title"),
-                author: z.string().optional().describe("Author name"),
-                header: z.string().optional().describe("Header text"),
-                footer: z.string().optional().describe("Footer text"),
+                title: z.string().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'title')?.techDescription || ''),
+                author: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'author')?.techDescription || ''),
+                header: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'header')?.techDescription || ''),
+                footer: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'footer')?.techDescription || ''),
                 sections: z.array(z.object({
-                    type: z.enum(["heading", "paragraph", "list", "table"]).describe("Content type"),
-                    text: z.string().optional().describe("Text content"),
-                    items: z.array(z.string()).optional().describe("List items"),
-                    rows: z.array(z.array(z.string())).optional().describe("Table rows"),
+                    type: z.enum(["heading", "paragraph", "list", "table"]).describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'type')?.techDescription || ''),
+                    text: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'text')?.techDescription || ''),
+                    items: z.array(z.string()).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'items')?.techDescription || ''),
+                    rows: z.array(z.array(z.string())).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'rows')?.techDescription || ''),
                     link: z.object({
-                        text: z.string().describe("Link text"),
-                        url: z.string().describe("URL")
-                    }).optional().describe("Hyperlink"),
+                        text: z.string().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'link')?.parameters?.find(lf => lf.name === 'text')?.techDescription || ''),
+                        url: z.string().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'link')?.parameters?.find(lf => lf.name === 'url')?.techDescription || '')
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'link')?.techDescription || ''),
                     style: z.object({
-                        bold: z.boolean().optional(),
-                        italic: z.boolean().optional(),
-                        size: z.number().optional().describe("Font size in points"),
-                        color: z.string().optional().describe("Hex color code"),
-                        fontFamily: z.string().optional().describe("Font family"),
-                        alignment: z.enum(["left", "center", "right", "justify"]).optional(),
-                    }).optional(),
-                })).describe("Document sections"),
-            }).describe("Document data with title and sections"),
-            options: z.object({}).optional()
+                        bold: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.parameters?.find(stf => stf.name === 'bold')?.techDescription || ''),
+                        italic: z.boolean().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.parameters?.find(stf => stf.name === 'italic')?.techDescription || ''),
+                        size: z.number().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.parameters?.find(stf => stf.name === 'size')?.techDescription || ''),
+                        color: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.parameters?.find(stf => stf.name === 'color')?.techDescription || ''),
+                        fontFamily: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.parameters?.find(stf => stf.name === 'fontFamily')?.techDescription || ''),
+                        alignment: z.enum(["left", "center", "right", "justify"]).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.parameters?.find(stf => stf.name === 'alignment')?.techDescription || ''),
+                    }).optional().describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.parameters?.find(sf => sf.name === 'style')?.techDescription || ''),
+                })).describe(toolConfig.parameters.find(p => p.name === 'data')?.parameters?.find(f => f.name === 'sections')?.techDescription || ''),
+            }).describe(toolConfig.parameters.find(p => p.name === 'data')?.techDescription || ''),
+            options: z.object({}).optional().describe(toolConfig.parameters.find(p => p.name === 'options')?.techDescription || ''),
         },
         async ({filePath, data, options = {}}) => {
             try {
@@ -240,7 +218,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to create document: ${error.message}`), tools.createDocument);
+                sendError(transport, new Error(`Failed to create document: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {
@@ -252,4 +230,4 @@ export const registerTool = (server: McpServer) => {
             }
         }
     );
-};
+}

@@ -68,7 +68,7 @@ export const readPresentation = async (filePath: string) => {
             });
         });
     });
-};
+}
 
 function extractTextFromSlideXML(xml: string): string[] {
     const textMatches = xml.match(/<a:t[^>]*>([^<]*)<\/a:t>/g) || [];
@@ -91,11 +91,12 @@ function extractCoreProperties(xml: string): any {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.readPresentation;
     server.tool(
-        tools.readPresentation,
-        "Reads PowerPoint (.pptx) files and extracts text content",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Path to PowerPoint file"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
         },
         async ({filePath}) => {
             try {
@@ -110,7 +111,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to read PowerPoint file: ${error.message}`), tools.readPresentation);
+                sendError(transport, new Error(`Failed to read PowerPoint file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {
@@ -122,4 +123,4 @@ export const registerTool = (server: McpServer) => {
             }
         }
     );
-};
+}

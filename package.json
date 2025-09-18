@@ -1,6 +1,6 @@
 {
   "name": "fs-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Production-ready Model Context Protocol (MCP) server providing Claude with complete file system integration including directory management, file operations, Office document creation/editing, and advanced file tree visualization. Pre-built executables available for macOS, Windows, and Linux for easy end-user installation without Node.js dependencies.",
   "main": "src/server.js",
   "keywords": [
@@ -46,7 +46,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.4",
+    "@modelcontextprotocol/sdk": "^1.18.0",
     "@types/express": "^5.0.3",
     "@vercel/ncc": "^0.38.3",
     "nodemon": "^3.1.10",

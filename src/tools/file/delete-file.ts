@@ -13,11 +13,12 @@ const deleteFile = async (filePath: string) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.deleteFile;
     server.tool(
-        tools.deleteFile,
-        "Deletes a file at the specified path",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the file to delete"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
         },
         async ({filePath}) => {
             try {
@@ -32,7 +33,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to delete file: ${error.message}`), tools.deleteFile);
+                sendError(transport, new Error(`Failed to delete file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

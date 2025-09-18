@@ -30,11 +30,12 @@ const listDirectories = async (dirPath: string = ".") => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.getDirectoryContent;
     server.tool(
-        tools.getDirectoryContent,
-        "Returns a list all files and folders within the specified directory",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            dirPath: z.string().optional().describe("Absolute or base-relative directory path to list. Defaults to the base/root directory if omitted"),
+            dirPath: z.string().optional().describe(toolConfig.parameters.find(p => p.name === 'dirPath')?.techDescription || ''),
         },
         async ({dirPath}) => {
             try {
@@ -49,7 +50,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to get directory content: ${error.message}`), tools.getDirectoryContent);
+                sendError(transport, new Error(`Failed to get directory content: ${error.message}`), tools.getDirectoryContent.name);
                 return {
                     content: [
                         {

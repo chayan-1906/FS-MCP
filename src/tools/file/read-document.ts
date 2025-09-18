@@ -18,14 +18,15 @@ const readDocument = async (filePath: string) => {
         messages: result.messages,
         wordCount: result.value.split(/\s+/).filter((word: string) => word.length > 0).length
     };
-};
+}
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.readDocument;
     server.tool(
-        tools.readDocument,
-        "Reads Word (.docx) files and extracts text content",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Path to Word document"),
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || ''),
         },
         async ({filePath}) => {
             try {
@@ -40,7 +41,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to read document: ${error.message}`), tools.readDocument);
+                sendError(transport, new Error(`Failed to read document: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {
@@ -52,4 +53,4 @@ export const registerTool = (server: McpServer) => {
             }
         }
     );
-};
+}

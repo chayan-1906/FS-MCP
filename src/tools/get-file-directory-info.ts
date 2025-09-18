@@ -27,11 +27,12 @@ const getFileDirectoryInfo = async (filePath: string) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.getFileDirectoryInfo;
     server.tool(
-        tools.getFileDirectoryInfo,
-        "Retrieves metadata about a file or directory",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            filePath: z.string().describe("Absolute or base-relative path to the file or directory")
+            filePath: z.string().describe(toolConfig.parameters.find(p => p.name === 'filePath')?.techDescription || '')
         },
         async ({filePath}) => {
             try {
@@ -46,7 +47,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to get file/directory info: ${error.message}`), tools.getFileDirectoryInfo);
+                sendError(transport, new Error(`Failed to get file/directory info: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

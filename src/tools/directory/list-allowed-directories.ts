@@ -14,9 +14,10 @@ const listAllowedDirectories = async () => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.listAllowedDirectories;
     server.tool(
-        tools.listAllowedDirectories,
-        "Returns the list of allowed directories and their permissions from the configuration",
+        toolConfig.name,
+        toolConfig.techDescription,
         {},
         async () => {
             try {
@@ -31,7 +32,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to list allowed directories: ${error.message}`), tools.listAllowedDirectories);
+                sendError(transport, new Error(`Failed to list allowed directories: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {

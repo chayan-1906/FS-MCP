@@ -20,12 +20,13 @@ const copyFile = async (source: string, destination: string) => {
 }
 
 export const registerTool = (server: McpServer) => {
+    const toolConfig = tools.copyFile;
     server.tool(
-        tools.copyFile,
-        "Copies a file from the source path to the destination path",
+        toolConfig.name,
+        toolConfig.techDescription,
         {
-            source: z.string().describe("Absolute or base-relative path of the source file"),
-            destination: z.string().describe("Absolute or base-relative path where the file should be copied to"),
+            source: z.string().describe(toolConfig.parameters.find(p => p.name === 'source')?.techDescription || ''),
+            destination: z.string().describe(toolConfig.parameters.find(p => p.name === 'destination')?.techDescription || ''),
         },
         async ({source, destination}) => {
             try {
@@ -40,7 +41,7 @@ export const registerTool = (server: McpServer) => {
                     ],
                 };
             } catch (error: any) {
-                sendError(transport, new Error(`Failed to copy file: ${error.message}`), tools.copyFile);
+                sendError(transport, new Error(`Failed to copy file: ${error.message}`), toolConfig.name);
                 return {
                     content: [
                         {
