@@ -23,7 +23,7 @@
     "nodejs",
     "typescript"
   ],
-  "author": "",
+  "author": "Padmanabha Das",
   "license": "ISC",
   "scripts": {
     "dev": "ts-node src/server.ts",

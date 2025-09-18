@@ -47,7 +47,15 @@ Download from [https://claude.ai/download](https://claude.ai/download)
 2. Do NOT delete the executable after running
 3. If you rename, move, or modify the executable, you must run it again (Step 3) to restart it properly
 
-#### 4. Configure Permissions:
+#### 4. 🌐 Explore Available Tools (Optional)
+
+Visit the homepage to browse all available tools:
+
+- **Homepage**: **http://localhost:20252/**
+- See all 20 File System tools with user-friendly descriptions
+- Great for understanding what the server can do
+
+#### 5. Configure Permissions:
 
 **IMPORTANT**: Access the permissions manager at **http://localhost:20252** to configure file system access:
 
@@ -63,15 +71,15 @@ If you close both Claude Desktop AND the terminal window, the file system server
 - Select appropriate permissions (Read Only or Read & Write)
 - Save your configuration
 
-#### 5. (Optional) Stop the Server:
+#### 6. (Optional) Stop the Server:
 
 You can stop the server if needed (launching Claude will automatically stop the currently running instance/port)
 
-#### 6. Launch Claude Desktop
+#### 7. Launch Claude Desktop
 
 Start Claude Desktop application
 
-#### 7. Start Using File Operations:
+#### 8. Start Using File Operations:
 
 Claude will now have access to file system operations based on your configured permissions
 
@@ -194,6 +202,53 @@ documentation: [FileSystem MCP User Guide](https://www.notion.so/FileSystem-MCP-
 | `read-document`              | Office    | Reads Word (.docx) files and extracts text content                                                      |
 |                              |           |                                                                                                         |
 | `run-shell-command`          | System    | Executes a shell command on the server                                                                  |
+
+---
+
+## 📋 Changelog
+
+### v1.1.0 (2025-09-18)
+
+#### ✨ New Features
+
+- **Interactive Homepage**: Complete tool browser at `http://localhost:20252/` showcasing all 20 file system MCP tools
+- **Advanced Search & Filtering**: Real-time search across tool names and descriptions with category-based filtering
+- **Tool Documentation Modals**: Click-to-view detailed information for each tool including parameters, examples, and
+  descriptions
+- **Responsive Design**: Modern glassmorphism UI with mobile-responsive layout and smooth animations
+
+#### 🔄 Changes
+
+- **Tool Architecture**: Enhanced all tool registrations with structured metadata integration using `mcp-utils` package
+- **Route Updates**: Renamed `/input` to `/manage-permissions` for better semantic clarity and user understanding
+- **Parameter Descriptions**: Migrated from hardcoded descriptions to dynamic parameter descriptions from tool
+  configurations
+- **Type Safety**: Added comprehensive TypeScript interfaces for Excel, Document, and Presentation data structures
+
+#### 🏗️ Technical Improvements
+
+- **Homepage Generation**: Created new `src/templates/homepageHTML.ts` with interactive HTML, CSS, and JavaScript
+- **Type Definitions**: Added `src/types/index.ts` with interfaces for `TreeNode`, `TreeResult`, `ExcelData`,
+  `PresentationData`, and `DocumentData`
+- **Build Process**: Unified build script execution across macOS and Windows platforms in `package-script.ts`
+- **Error Handling**: Improved error reporting consistency across all tool implementations
+
+#### 📦 Dependencies
+
+- **@modelcontextprotocol/sdk**: Updated from `^1.17.4` to `^1.18.0` for latest MCP protocol support
+- **mcp-utils**: Integrated for enhanced tool categorization and parameter management
+
+#### 🧹 Code Quality
+
+- **Interface Consolidation**: Moved type definitions from individual tool files to centralized `src/types/`
+- **Configuration Management**: Unified tool constants with comprehensive metadata including categories and descriptions
+- **Package Management**: Removed package-lock.json for better cross-platform compatibility
+
+#### 📊 Statistics
+
+- **Total Tools**: 20 comprehensive file system operations organized across 3 categories
+- **New Routes**: Homepage (`/`) with searchable tool browser and permissions management (`/manage-permissions`)
+- **UI Components**: Interactive modals, search functionality, category filters, and responsive design elements
 
 ---
 
