@@ -342,7 +342,7 @@ If this project helped you, please give it a ⭐️!
 
 ## 📱 Connect With Me
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/chayan-ranjan-das/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/padmanabha-das-59bb2019b/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black)](https://github.com/chayan-1906)
 
 ## 💡 Need More Features?
