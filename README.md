@@ -4,7 +4,7 @@
 [![Node.js](https://img.shields.io/badge/node.js-16.x+-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.9.2-blue.svg)](https://www.typescriptlang.org/)
 [![Express](https://img.shields.io/badge/express-5.1.0-black.svg)](https://expressjs.com/)
-[![License](https://img.shields.io/badge/license-ISC-yellow.svg)](https://opensource.org/licenses/ISC)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![MCP](https://img.shields.io/badge/model_context_protocol-compliant-purple.svg)](https://modelcontextprotocol.io/)
 
 Production-ready Model Context Protocol (MCP) server providing Claude with complete file system integration including
@@ -352,7 +352,7 @@ extend the functionality based on your requirements.
 
 ## 🔗 License
 
-ISC
+MIT
 
 ---
 
